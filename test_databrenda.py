@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Oct 10 13:50:57 2023
+
+@author: nparis
+"""
+import unittest
+import testbrendapy
+
+class TestDataBrenda(unittest.TestCase):
+
+    def test_good_nb_data(self):
+        setdataprot = testbrendapy.data_brenda(['1.1.1.1'])
+        self.assertEqual(len(setdataprot), 299)
+
+    def test_nb_organisms(self):
+        setdataprot = testbrendapy.data_brenda(['1.1.1.1'])
+        count = 0
+        for d_prot in setdataprot:
+            if d_prot['organism'] == 'Homo sapiens':
+                count += 1
+        self.assertEqual(count,48)
+
+if __name__ == '__main__':
+    unittest.main()
