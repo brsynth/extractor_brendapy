@@ -8,13 +8,15 @@ Created on Thu Oct  5 13:53:41 2023
 from typing import Dict, List
 import json
 
+from collections import defaultdict
+
 path_data_brenda = '/home/nparis/brenda_enzyme/'
 # file_name_json = 'brenda_2023_1.json'
 file_name_txt = 'brenda_2023_1.txt'
 name_new_file_json = 'setbranda.json'
 
 from brendapy import BrendaParser, BrendaProtein
-# from brendapy.console import console
+from brendapy.console import console
 # from brendapy.log import get_logger
 # from brendapy.taxonomy import Taxonomy
 
@@ -32,11 +34,39 @@ BRENDA_PARSER = BrendaParser(str(path_data_brenda+file_name_txt))
 # Enregistrer les donnees dans un fichier au format json
 # =============================================================================
 
-#TODO : liste des parametres
-#Dict des parametre souhaite
-# dict_para = {"EC" : None,'protein_id':None, 'organism':None, 'uniprot':None, 'KM':None}
-# def create_dict_para() -> Dict:
-#     pass
+#Dict des parametre souhaite qui seront un argument de la classe -> kwarg
+
+
+# def desired_parameter(ec_number : str, dict_proteins : dict, cine_parameter) -> Dict:
+#     """
+    
+
+#     Returns
+#     -------
+#     Dict
+#         DESCRIPTION.
+
+#     """
+#     if cine_parameter == 'KM':
+#         a = dict_proteins.KM
+#     else:
+#         a = dict_proteins.KKM
+
+#     if dict_proteins.uniprot and a:
+#         for dict_cinetique in a:
+#             try:
+#                 dict_result = {"EC" : ec_number,
+#                                 "uniprot": dict_proteins.uniprot,
+#                                 "organism": dict_proteins.organism,
+#                                 "substrate": dict_cinetique['substrate'],
+#                                 str(cine_parameter) : dict_cinetique['value'],
+#                                 'comment': dict_cinetique['comment']}
+#             except KeyError:
+#                 '''Parfois nous n'avons pas l'information pour la valeur
+#                 du Km ou le KKM (=Kcat) et le noms du substrat'''
+#                 pass
+#     return dict_result
+
 
 def list_all_ec_in_data() -> List:
     """
@@ -44,8 +74,6 @@ def list_all_ec_in_data() -> List:
 
     Returns
     -------
-with open("/chemin/vers/le_fichier.json", "w") as f:
-    json.dump(data, f)
     List
         list all EC number in Brenda.
 
@@ -53,7 +81,7 @@ with open("/chemin/vers/le_fichier.json", "w") as f:
     return BRENDA_PARSER.keys()
 
 
-def data_brenda(list_ec : list) -> List[Dict]:
+def data_brenda(list_ec : list, cine_parameter : str) -> List[Dict]:
     """
     List containing a dictionary for each protein with the parameters
     selected
@@ -68,6 +96,7 @@ def data_brenda(list_ec : list) -> List[Dict]:
     ----------
     list_ec : list
         All EC number in Brenda.
+    parameter : str
 
     Returns
     -------
@@ -78,15 +107,20 @@ def data_brenda(list_ec : list) -> List[Dict]:
     results = []
     for ec_number in list_ec:
         for k, dict_proteins in BRENDA_PARSER.get_proteins(ec_number).items():
-            #TODO: facto la condition et les parametres pour pouvoir les modif
-            if dict_proteins.uniprot and dict_proteins.KM:
-                for dict_KM in dict_proteins.KM:
+
+            if cine_parameter == 'KM':
+                a = dict_proteins.KM
+            else:
+                a = dict_proteins.KKM
+
+            if dict_proteins.uniprot and a:
+                for dict_KM in a:
                     try:
-                        results.append({"EC" : ec_number, "protein_id": k,
+                        results.append({"EC" : ec_number,
                                         "uniprot": dict_proteins.uniprot,
                                         "organism": dict_proteins.organism,
                                         "substrate": dict_KM['substrate'],
-                                        'KM' : dict_KM['value'],
+                                        str(cine_parameter) : dict_KM['value'],
                                         'comment': dict_KM['comment']})
                     except KeyError:
                         '''Parfois nous n'avons pas l'information pour la valeur
@@ -95,7 +129,8 @@ def data_brenda(list_ec : list) -> List[Dict]:
     return results
 
 
-# r = data_brenda(['1.1.1.1'])
+# brendaset = data_brenda(['1.1.1.1'], 'KM')
+# r = data_brenda(['1.1.1.1'], 'KKM')
 
 # brendaset = data_brenda(list_all_ec_in_data())
 
@@ -127,4 +162,14 @@ def create_file_json(path_json : str, data : list[Dict]):
     with open(path_json, "w") as file:
         json.dump(data, file, indent=2)
 
-create_file_json(str(path_data_brenda+name_new_file_json), data_brenda(list_all_ec_in_data()))
+# create_file_json(str(path_data_brenda+name_new_file_json), data_brenda(list_all_ec_in_data()))
+
+
+
+class DataSetBrenda():
+    pass
+
+
+
+
+
