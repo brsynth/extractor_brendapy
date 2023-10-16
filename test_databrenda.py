@@ -11,16 +11,19 @@ import testbrendapy
 class TestDataBrenda(unittest.TestCase):
 
     def test_good_nb_data(self):
-        setdataprot = testbrendapy.data_brenda(['1.1.1.1'])
+        setdataprot = testbrendapy.data_brenda(['1.1.1.1'], 'KM')
         self.assertEqual(len(setdataprot), 299)
 
     def test_nb_organisms(self):
-        setdataprot = testbrendapy.data_brenda(['1.1.1.1'])
+        setdataprot = testbrendapy.data_brenda(['1.1.1.1'], 'KM')
         count = 0
         for d_prot in setdataprot:
             if d_prot['organism'] == 'Homo sapiens':
                 count += 1
         self.assertEqual(count,48)
+
+    def test_name_new_file_created(self):
+        self.assertEqual(testbrendapy.name_new_file_created('KKM'), 'setbrenda_KKM.json')
 
 if __name__ == '__main__':
     unittest.main()
