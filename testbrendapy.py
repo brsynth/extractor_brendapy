@@ -15,7 +15,7 @@ path_data_brenda = '/home/nparis/brenda_enzyme/'
 file_name_txt = 'brenda_2023_1.txt'
 
 from brendapy import BrendaParser, BrendaProtein
-from brendapy.console import console
+# from brendapy.console import console
 # from brendapy.log import get_logger
 # from brendapy.taxonomy import Taxonomy
 
@@ -24,32 +24,34 @@ BRENDA_PARSER = BrendaParser(str(path_data_brenda+file_name_txt))
 # =============================================================================
 # Parameters we want to retrieve from Brenda:
 # EC number
-# Km values
+# Km /Kcat values
 # Substrat
 # Organisms
 # Uniprot
 # Commentary
 
-# Enregistrer les donnees dans un fichier au format json
+# Save data in a json format file
+
+# List parametre souhaite
+# reorganisation du code
+# contacte la personne de brendapy
 # =============================================================================
-
-#Dict des parametre souhaite qui seront un argument de la classe -> kwarg
-
 
 def name_new_file_created(cinetique_parameter : str) -> str:
     """
-    
+    Gives the name of the file according to the selected parameters in json
+    format
 
     Parameters
     ----------
     cinetique_parameter : str
-        type de parametre de cinetique que nous allons recuperer et stocker
-        dans le ficier.
+        type of kinetics parameter we're going to retrieve and store in the
+        file.
 
     Returns
     -------
     str
-        Noms du fichier a cree.
+        Names of the file to be created.
 
     """
     return 'setbrenda_' + str(cinetique_parameter) + '.json'
@@ -95,13 +97,10 @@ def data_brenda(list_ec : list, cine_parameter : str) -> List[Dict]:
     for ec_number in list_ec:
         for k, dict_proteins in BRENDA_PARSER.get_proteins(ec_number).items():
 
-            if cine_parameter == 'KM':
-                a = dict_proteins.KM
-            else:
-                a = dict_proteins.KKM
+            a = getattr(dict_proteins, cine_parameter)
 
             if dict_proteins.uniprot and a:
-                #dict_cine = soit dict_KM soit dict_KKM = Kcat
+                #dict_cine = soit dict_KM soit dict_TN = Kcat
                 for dict_cine in a:
                     try:
                         results.append({"EC" : ec_number,
@@ -111,50 +110,37 @@ def data_brenda(list_ec : list, cine_parameter : str) -> List[Dict]:
                                         str(cine_parameter) : dict_cine['value'],
                                         'comment': dict_cine['comment']})
                     except KeyError:
-                        '''Parfois nous n'avons pas l'information pour la valeur
-                        du Km et le noms du substrat'''
+                        '''Sometimes we don't have information on the Km value
+                        and substrate names'''
                         pass
     return results
 
 
-# brendaset = data_brenda(['1.1.1.1'], 'KM')
-# r = data_brenda(['1.1.1.1'], 'KKM')
-
-# brendaset = data_brenda(list_all_ec_in_data())
-
-# Affichage Brendapy
-# console.rule()
-# console.print(brendaset)
-# console.rule()
-
-# =============================================================================
-# Ecrire les donnees dans un fichier JSON
-# =============================================================================
-
 def create_file_json(path_json : str, data : list[Dict]):
     """
-    
+    Creates the json file and writes information on the various proteins with
+    the parameters selected inside
 
     Parameters
     ----------
     path_json : str
-        DESCRIPTION.
+        path of the json file to create.
     data : list[Dict]
-        DESCRIPTION.
+        Parameter dictionary list for each proteins.
 
     Returns
     -------
-    Creation d'un fichier au noms demande a l'emplacement demande au format json.
+    Creation of a file with the requested names at the requested location in
+    json format.
 
     """
-    with open(path_json, "w") as file:
-        json.dump(data, file, indent=2)
-
-# create_file_json(str(path_data_brenda+name_new_file_created('KM')), data_brenda(list_all_ec_in_data(),'KM'))
+    with open(path_json, "w", encoding = 'utf8') as file:
+        json.dump(data, file, indent = 2, ensure_ascii=False)
 
 
 class DataSetBrenda:
     def __init__(self, cinetique_parameter : str, path_data_brenda : str):
+        #cinetique parameter = Km ou Kcat (=TN)
         self.cinetique_parameter = cinetique_parameter
         self.path_set_brend = path_data_brenda + name_new_file_created(cinetique_parameter)
 
@@ -163,10 +149,26 @@ class DataSetBrenda:
     def get_path_set_brend(self):
         return self.path_set_brend
 
+    #@proprerty -> enlever () apres le run dans l'appel de fonction
     def run(self):
         create_file_json(self.get_path_set_brend(), data_brenda(list_all_ec_in_data(),
                                                              self.get_cinetique_parameter()))
 
 
-# print(DataSetBrenda('KKM', path_data_brenda).get_path_set_brend())
-DataSetBrenda('KKM', path_data_brenda).run()
+
+# if __name__ == '__main__':
+
+# create_file_json(str(path_data_brenda+name_new_file_created('KM')),
+#                  data_brenda(list_all_ec_in_data(),'KM'))
+
+DataSetBrenda('TN', path_data_brenda).run()
+
+# brendaset = data_brenda(['1.1.1.1'], 'KM')
+# r = data_brenda(['1.1.1.1'], 'TN')
+
+# brendaset = data_brenda(list_all_ec_in_data())
+
+# Affichage Brendapy
+# console.rule()
+# console.print(brendaset)
+# console.rule()
