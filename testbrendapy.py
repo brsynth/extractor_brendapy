@@ -32,7 +32,6 @@ from brendapy import BrendaParser, BrendaProtein
 
 # List parametre souhaite
 # reorganisation du code et re-ecriture de la docstring qui n'est plus a jours!
-# contacte la personne de brendapy
 # =============================================================================
 
 def file_path_request(path_brenda : str) -> str:
@@ -90,28 +89,25 @@ def list_all_ec_in_data() -> List:
 
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     """
-    
+    verifie que tous les parametre de la liste sont dans dict_proteins.data
+    S'ils sont dedans retourne TRUE
 
     Parameters
     ----------
     list_p : list
-        DESCRIPTION.
+        liste des parametre a verifier.
     dict_proteins_data : OrderedDict
-        DESCRIPTION.
+        ictionnaire ou il y a tous les parametre connu dans Brenda.
 
     Returns
     -------
     bool
-        DESCRIPTION.
+        reourne True ou False.
 
     """
-    list_exception = ['comment','substrate']
     #TODO : concateniser
     for k_parameter in list_p:
         # n'accepte pas le if not ... and ... :
-        if k_parameter in list_exception:
-            print(k_parameter)
-            continue
         if not (k_parameter in dict_proteins_data):
             return False
         if not dict_proteins_data[str(k_parameter)]:
@@ -119,10 +115,34 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     return True
 
 
-def find_shared_keys(dicts):
-    # Create a dictionary
-    key_to_dicts = {}
-    pass
+def find_shared_substrate(d_index : dict, d_kinetic : dict) -> dict:
+    """
+    dictionnaire contenant les index des substrats qui sont partager pour les
+    differrents parametre de cinetique demande
+
+    Parameters
+    ----------
+    d_index : dict
+        DESCRIPTION.
+    d_kinetic : dict
+        DESCRIPTION.
+
+    Returns
+    -------
+    dict
+        DESCRIPTION.
+
+    """
+    # dictionnaire index pour les differents substrats
+    for i_subst in range(len(d_kinetic)):
+        try:
+            if not (d_kinetic[i_subst]['substrate'] in d_index):
+                d_index[d_kinetic[i_subst]['substrate']] = [i_subst]
+            else:
+                d_index[str(d_kinetic[i_subst]['substrate'])].append(i_subst)
+        except KeyError:
+            pass
+    return d_index
 
 
 def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
@@ -160,47 +180,40 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
 
     results = []
     for ec_number in list_ec:
-        for k, dict_proteins in BRENDA_PARSER.get_proteins(ec_number).items():
+        for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
             #verifie que tous les parametre de la liste sont dans dict_proteins.data
             #si ils sont dedans -> possede une valeur
             if is_parameter_values(d_p_setting['p_primaire'], dict_proteins.data) and is_parameter_values(d_p_setting['p_kinetic'], dict_proteins.data):
-                d = {}
-                for p in d_p_setting['p_primaire']:
-                    d[str(p)] = dict_proteins.data[p]
-                    d_tempo = {}
-                    for cine in d_p_setting['p_kinetic']:
-                        #mettre toutes les parametre de cinetique ensemble pour les reorganise par substrat
-                        #s'ils ont le meme substrat on mets les information km et tn ensemble sinon on les mets dans des dictionnaire differents
-                        #pour eviter d'avoir des doublons
-                        d_tempo[str(cine)] = dict_proteins.data[cine]
-                    d['dict kinetic'] = d_tempo
-                    # print(d_tempo)
-                    # a = find_shared_keys([d_tempo['KM'], d_tempo['TN']])
-                    # print(a)
-                    #Si c'est les meme substrate les mettre ensemble sinon mettre dans des suivants
-                    # except KeyError:
-                    #     "Probleme avec les clefs comment et substrat"
-                    # print('__________________')
+                # d = {}
+                d_tempo = {}
+                d_index_subst = {}
+                for cine in d_p_setting['p_kinetic']:
+                    #mettre toutes les parametre de cinetique ensemble pour les reorganise par substrat
+                    #s'ils ont le meme substrat on mets les information km et tn ensemble sinon on les mets dans des dictionnaire differents
+                    #pour eviter d'avoir des doublons
+                    d_tempo[str(cine)] = dict_proteins.data[cine]
+                    
+                    d_index_subst = find_shared_substrate(d_index_subst, dict_proteins.data[cine])
+                    # print(d_index_subst)
+                #Dans un pemiere temps nousallons nous occupe des subst qui
+                #ne sont present qu'une fois
+                # TODO : les substrats presents plusieurs fois, ayant des comment differents
+                for substr in d_index_subst.keys():
+                    if len(d_index_subst[substr]) == len(d_p_setting['p_kinetic']):
+                        d={}
+                        for i in range(len(d_p_setting['p_kinetic'])):
+                            # str du parametre de cine : d_p_setting['p_kinetic'][i])
+                            #index dans le dictionnaire de cinetique : d_index_subst[substr][i])
+                            # print(d_tempo[str(d_p_setting['p_kinetic'][i])][d_index_subst[substr][i]])
+                            d[str(d_p_setting['p_kinetic'][i])] = d_tempo[str(d_p_setting['p_kinetic'][i])][d_index_subst[substr][i]]
+                        for p in d_p_setting['p_primaire']:
+                            d[str(p)] = dict_proteins.data[p]
+                        results.append(d)
+                        # print('         ')
+                # print(d_index_subst)
                 results.append(d)
-                
-                #Ancienne methode (prbl nous ne pouvons pas changer les parametre a la demande)
-                # for para_kinetic in list_cine_parameter:
-                #     a = getattr(dict_proteins, para_kinetic)
-
-                #     if dict_proteins.uniprot and a:
-                #         #dict_cine = soit dict_KM soit dict_TN = Kcat
-                #         for dict_cine in a:
-                #             try:
-                #                 results.append({"EC" : ec_number,
-                #                                 "uniprot": dict_proteins.data['uniprot'],
-                #                                 "organism": dict_proteins.organism,
-                #                                 "substrate": dict_cine['substrate'],
-                #                                 str(para_kinetic) : dict_cine['value'],
-                #                                 'comment': dict_cine['comment']})
-                #             except KeyError:
-                #                 '''Sometimes we don't have information on the Km value
-                #                 and substrate names'''
-                #                 pass
+                # print('_______________')
+                # results.append(d)
     return results
 
 
@@ -274,7 +287,7 @@ def parameter_sorting(list_parameter : list) -> Dict:
 class DataSetBrenda:
     def __init__(self, list_paramater : list, path_data_brenda : str):
         self.d_parameter_setting = parameter_sorting(list_paramater)
-        #ou faire un fichier par parametre cinetique different
+        #noms du fichier avec la date et heure de creation ...
         self.path_set_brend = path_data_brenda + name_new_file_created(self.d_parameter_setting['p_kinetic'][0])
 
     def get_cinetique_parameter(self):
@@ -313,8 +326,6 @@ brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')), data_brenda(['1.1.1.1'], 'KM'))
 
 # print(BRENDA_PARSER.BRENDA_KEYS)
-
-# brendaset = data_brenda(list_all_ec_in_data(), 'SA')
 
 
 # Affichage Brendapy
