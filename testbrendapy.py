@@ -160,7 +160,8 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
     ----------
     list_ec : list
         All EC number in Brenda.
-    parameter : str
+    d_p_setting : dict
+        
 
     Returns
     -------
@@ -209,11 +210,6 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
                         for p in d_p_setting['p_primaire']:
                             d[str(p)] = dict_proteins.data[p]
                         results.append(d)
-                        # print('         ')
-                # print(d_index_subst)
-                results.append(d)
-                # print('_______________')
-                # results.append(d)
     return results
 
 
