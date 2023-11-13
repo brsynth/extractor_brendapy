@@ -115,7 +115,7 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     return True
 
 
-def find_shared_substrate(d_index : dict, d_kinetic : dict) -> dict:
+def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dict:
     """
     dictionnaire contenant les index des substrats qui sont partager pour les
     differrents parametre de cinetique demande
@@ -126,6 +126,7 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict) -> dict:
         DESCRIPTION.
     d_kinetic : dict
         DESCRIPTION.
+    p_cine : str
 
     Returns
     -------
@@ -136,13 +137,67 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict) -> dict:
     # dictionnaire index pour les differents substrats
     for i_subst in range(len(d_kinetic)):
         try:
-            if not (d_kinetic[i_subst]['substrate'] in d_index):
-                d_index[d_kinetic[i_subst]['substrate']] = [i_subst]
+            if not (str(d_kinetic[i_subst]['substrate']) in d_index):
+                d_index[str(d_kinetic[i_subst]['substrate'])] = {str(p_cine) : [i_subst]}
+            elif not(p_cine in d_index[str(d_kinetic[i_subst]['substrate'])]):
+                d_index[str(d_kinetic[i_subst]['substrate'])].update({p_cine : [i_subst]})
             else:
-                d_index[str(d_kinetic[i_subst]['substrate'])].append(i_subst)
+                d_index[str(d_kinetic[i_subst]['substrate'])][p_cine].append(i_subst)
         except KeyError:
             pass
     return d_index
+
+
+def d_comment_each_kinetic(d_index : dict, d_i_substr : dict, dict_proteins : dict) -> dict:
+    """
+    
+
+    Parameters
+    ----------
+    d_index : dict
+        DESCRIPTION.
+    d_i_substr : dict
+        DESCRIPTION.
+    dict_proteins : dict
+        DESCRIPTION.
+
+    Returns
+    -------
+    dict
+        DESCRIPTION.
+
+    """
+    for kinetic, l_index in d_i_substr.items():
+        for index in l_index:
+            # print(dict_proteins[kinetic][index]['comment'])
+            if not (kinetic in d_index):
+                d_index[kinetic] = {str(index) : dict_proteins[kinetic][index]['comment']}
+            elif not(index in d_index[kinetic]):
+                d_index[kinetic].update({str(index) : dict_proteins[kinetic][index]['comment']})
+    return d_index
+
+
+def find_keys_with_similar_values(dict1, dict2):
+    # Get sets of values for each dictionary
+    values_dict1 = set(dict1.values())
+    values_dict2 = set(dict2.values())
+
+    # Find common values between the two sets
+    common_values = values_dict1.intersection(values_dict2)
+
+    # Initialize a list to store keys with similar values
+    similar_keys = []
+
+    # Iterate through the keys and values of the first dictionary
+    for key, value in dict1.items():
+        # Check if the value is present in the common values
+        if value in common_values:
+            # Check if the same value is present for the same key in the second dictionary
+            if dict2.get(key) == value:
+                # Add the key to the list of similar keys
+                similar_keys.append(key)
+
+    return similar_keys
 
 
 def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
@@ -178,7 +233,7 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
         #Ceux qui possede plusieurs valeurs -> list de dictionnaire
         #Ceux qui sont des parametre dans les dictionnaires : ex: substrate, comment, value
     """
-
+    #TODO : factoriser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     results = []
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
@@ -186,30 +241,33 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
             #si ils sont dedans -> possede une valeur
             if is_parameter_values(d_p_setting['p_primaire'], dict_proteins.data) and is_parameter_values(d_p_setting['p_kinetic'], dict_proteins.data):
                 # d = {}
-                d_tempo = {}
+                # d_tempo = {}
                 d_index_subst = {}
                 for cine in d_p_setting['p_kinetic']:
                     #mettre toutes les parametre de cinetique ensemble pour les reorganise par substrat
                     #s'ils ont le meme substrat on mets les information km et tn ensemble sinon on les mets dans des dictionnaire differents
                     #pour eviter d'avoir des doublons
-                    d_tempo[str(cine)] = dict_proteins.data[cine]
+                    # d_tempo[str(cine)] = dict_proteins.data[cine]
                     
-                    d_index_subst = find_shared_substrate(d_index_subst, dict_proteins.data[cine])
+                    d_index_subst = find_shared_substrate(d_index_subst, dict_proteins.data[cine], cine)
                     # print(d_index_subst)
-                #Dans un pemiere temps nousallons nous occupe des subst qui
-                #ne sont present qu'une fois
                 # TODO : les substrats presents plusieurs fois, ayant des comment differents
-                for substr in d_index_subst.keys():
-                    if len(d_index_subst[substr]) == len(d_p_setting['p_kinetic']):
-                        d={}
-                        for i in range(len(d_p_setting['p_kinetic'])):
-                            # str du parametre de cine : d_p_setting['p_kinetic'][i])
-                            #index dans le dictionnaire de cinetique : d_index_subst[substr][i])
-                            # print(d_tempo[str(d_p_setting['p_kinetic'][i])][d_index_subst[substr][i]])
-                            d[str(d_p_setting['p_kinetic'][i])] = d_tempo[str(d_p_setting['p_kinetic'][i])][d_index_subst[substr][i]]
-                        for p in d_p_setting['p_primaire']:
-                            d[str(p)] = dict_proteins.data[p]
-                        results.append(d)
+                for substr, d_i_substr in d_index_subst.items():
+                    d={}
+                    for p_k, l_i_subst in d_i_substr.items():
+                        if len(l_i_subst) == 1:
+                            for p in d_p_setting['p_primaire']:
+                                d[str(p)] = dict_proteins.data[p]
+                            for parameter_k in d_p_setting['p_d_kinetic']:
+                                d[str(p_k + '_' + parameter_k)] = dict_proteins.data[p_k][l_i_subst[0]][parameter_k]
+                        elif len(l_i_subst) > 1:
+                            d_index_comment = {}
+                            d_index_comment = d_comment_each_kinetic(d_index_comment, d_i_substr, dict_proteins.data)
+                            # print(d_index_comment)
+                            # print()
+                            # print(d_index_comment[p_k])
+                            # truc = find_keys_with_similar_values(d_index_comment)
+                    results.append(d)
     return results
 
 
@@ -220,7 +278,7 @@ def create_file_json(path_json : str, data : list[Dict]):
 
     Parameters
     ----------
-    path_json : str
+    path_json : strp_d_kinetic
         path of the json file to create.
     data : list[Dict]
         Parameter dictionary list for each proteins.
@@ -263,12 +321,12 @@ def parameter_sorting(list_parameter : list) -> Dict:
     Parameters
     ----------
     list_parameter : list
-        DESCRIPTION.
+        liste des parametre souhaite par l'utilisateur
 
     Returns
     -------
     Dict
-        DESCRIPTION.
+        Classification des parametres souhaite par l'utilisateur
 
     """
     all_parameter = {'p_primaire' : ["ec", "uniprot", "organism"],
@@ -314,7 +372,7 @@ BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/'))
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
 #                  data_brenda(list_all_ec_in_data(),'KM'))
 
-list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN']
+list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
 # DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
 
 d_parameter_setting = parameter_sorting(list_p)
