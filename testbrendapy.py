@@ -122,7 +122,7 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
     d_index : dict(dict)
         dictionnaire ayant en clef les substrat et en valeur un dictionnaire
         pour chaque parametre souhaite avec la liste des index dans la base de
-        donne de brenda ppour ce substrat.
+        donne de brenda pour ce substrat.
 
     """
     # dictionnaire index pour les differents substrats
@@ -139,33 +139,39 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
     return d_index
 
 
-def d_comment_each_kinetic(d_index : dict, d_i_substr : dict, dict_proteins : dict) -> dict:
+def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
+                           dict_proteins : dict) -> dict:
     """
-    
+    Associe tous les commentaires du parametre a son index
 
     Parameters
     ----------
     d_index : dict
-        DESCRIPTION.
+        
     d_i_substr : dict
-        DESCRIPTION.
-    dict_proteins : dict
-        DESCRIPTION.
+        dictionnaire pour chaque parametre souhaite avec la liste des index 
+        dans la base de donne de brenda ppour ce substrat.
+    dict_proteins : OrderedDict
+        Base de donnes de Brenda sous forme de dictionnaire
 
     Returns
     -------
-    dict
-        DESCRIPTION.
+    d_index : dict(dict)
+        Dictionnaire Ayant pour clef les parametres souhaite, pour valeur un
+        dictionnaire avec l'index et son commentaire dans la base de donne de
+        Brenda.
+        Ex: {
+            'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
+             'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
+                    '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
 
     """
     for kinetic, l_index in d_i_substr.items():
         for index in l_index:
-            # print(dict_proteins[kinetic][index]['comment'])
             try:
                 if not (kinetic in d_index):
                     d_index[kinetic] = {str(index) : dict_proteins[kinetic][index]['comment']}
                 elif not(index in d_index[kinetic]):
-                    # print(dict_proteins[kinetic][index])
                     d_index[kinetic].update({str(index) : dict_proteins[kinetic][index]['comment']})
             except KeyError:
                 pass
@@ -184,7 +190,7 @@ def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
 
     Returns
     -------
-    List[Dict]
+    l_keys : List[Dict]
         DESCRIPTION.
 
     """
@@ -202,18 +208,19 @@ def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
     return l_keys
 
 
-def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict, i_sub_d_brenda, p_kinetic):
+def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
+                        i_sub_d_brenda, p_kinetic):
     """
     
 
     Parameters
     ----------
-    d_result : TYPE
+    d_result : dict
         DESCRIPTION.
     d_p_setting : dict
         DESCRIPTION.
-    dict_proteins : dict
-        DESCRIPTION.
+    dict_proteins : OrderedDict
+        Base de donnes de Brenda sous forme de dictionnaire.
     i_sub_d_brenda : TYPE
         DESCRIPTION.
     p_kinetic : TYPE
@@ -221,14 +228,14 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict, i_su
 
     Returns
     -------
-    d_result : TYPE
+    d_result : dict
         DESCRIPTION.
 
     """
     #mettre **kwarg
-    for p in d_p_setting['p_primaire']:
+    for p in d_p_setting['p_str']:
         d_result[str(p)] = dict_proteins[p]
-    for parameter_k in d_p_setting['p_d_kinetic']:
+    for parameter_k in d_p_setting['key_p_list_dict']:
         try:
             d_result[str(p_kinetic + '_' + parameter_k)] = dict_proteins[p_kinetic][i_sub_d_brenda][parameter_k]
         except KeyError:
@@ -277,14 +284,18 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
             #verifie que tous les parametre de la liste sont dans dict_proteins.data
             #si ils sont dedans -> possede une valeur
-            if is_parameter_values(d_p_setting['p_primaire'], dict_proteins.data) and is_parameter_values(d_p_setting['p_kinetic'], dict_proteins.data):
+            if is_parameter_values(d_p_setting['p_str'], dict_proteins.data) and is_parameter_values(d_p_setting['p_list_dict'], dict_proteins.data):
 
                 d_index_subst = {}
-                for cine in d_p_setting['p_kinetic']:
-                    #mettre toutes les parametre de cinetique ensemble pour les reorganise par substrat
-                    #s'ils ont le meme substrat on mets les information km et tn ensemble sinon on les mets dans des dictionnaire differents
+                for cine in d_p_setting['p_list_dict']:
+                    #mettre toutes les parametre de cinetique ensemble pour les
+                    #reorganise par substrat
+                    #s'ils ont le meme substrat on mets les information km et 
+                    #tn ensemble sinon on les mets dans des dictionnaire differents
                     #pour eviter d'avoir des doublons
-                    d_index_subst = find_shared_substrate(d_index_subst, dict_proteins.data[cine], cine)
+                    d_index_subst = find_shared_substrate(d_index_subst,
+                                                          dict_proteins.data[cine],
+                                                          cine)
 
                 # TODO : les substrats presents plusieurs fois, ayant des comment differents
                 for substr, d_i_substr in d_index_subst.items():
@@ -292,19 +303,26 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
                     d_index_comment = {}
                     for p_k, l_i_subst in d_i_substr.items():
                         if len(l_i_subst) == 1:
-                            d = create_subdict_json(d, d_p_setting, dict_proteins.data, l_i_subst[0], p_k)
+                            d = create_subdict_json(d, d_p_setting,
+                                                    dict_proteins.data,
+                                                    l_i_subst[0], p_k)
 
                         if len(l_i_subst) > 1:
-                            d_index_comment = d_comment_each_kinetic(d_index_comment, d_i_substr, dict_proteins.data)
+                            d_index_comment = d_comment_each_kinetic(d_index_comment,
+                                                                     d_i_substr,
+                                                                     dict_proteins.data)
                             l_index_comment = find_keys_with_similar_values(d_index_comment)
                     
                     if d_index_comment:
                         for couple in l_index_comment:
                             d = {}
-                            for p_kine in d_p_setting['p_kinetic']:
+                            for p_kine in d_p_setting['p_list_dict']:
                                 try:
                                     index_comment = int(couple[p_kine])
-                                    d = create_subdict_json(d, d_p_setting, dict_proteins.data, index_comment, p_kine)
+                                    d = create_subdict_json(d, d_p_setting,
+                                                            dict_proteins.data,
+                                                            index_comment,
+                                                            p_kine)
                                 except KeyError:
                                     pass
                             results.append(d)
@@ -403,14 +421,15 @@ class DataSetBrenda:
 
     #@property -> enlever () apres le run dans l'appel de fonction
     def run(self):
-        create_file_json(self.get_path_set_brend(), data_brenda(list_all_ec_in_data(),
-                                                              self.get_cinetique_parameter()))
+        create_file_json(self.get_path_set_brend(),
+                         data_brenda(list_all_ec_in_data(),
+                                     self.get_cinetique_parameter()))
 
 
 # =============================================================================
 # =============================================================================
 # =============================================================================
-# =============================================================================
+# ====================="""========================================================
 # =============================================================================
 # =============================================================================
 # =============================================================================
@@ -424,15 +443,16 @@ BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/'))
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
 #                  data_brenda(list_all_ec_in_data(),'KM'))
 
-"""
+
 list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
-DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
-"""
-for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
-    a = dict_proteins
+# DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
+
+
+# for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
+#     a = dict_proteins
     
-# d_parameter_setting = parameter_sorting(list_p)
-# brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
+d_parameter_setting = parameter_sorting(list_p)
+brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
 # brendaset = data_brenda(list_all_ec_in_data(), d_parameter_setting)
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')), data_brenda(['1.1.1.1'], 'KM'))
 
