@@ -11,27 +11,15 @@ import json
 from collections import defaultdict
 from datetime import datetime
 
-# path_data_brenda = '/home/nparis/brenda_enzyme/'
-# file_name_json = 'brenda_2023_1.json'
-# file_name_txt = 'brenda_2023_1.txt'
-
 from brendapy import BrendaParser, BrendaProtein
 # from brendapy.console import console
 # from brendapy.log import get_logger
 # from brendapy.taxonomy import Taxonomy
 
 # =============================================================================
-# Parameters we want to retrieve from Brenda:
-# EC number
-# Km /Kcat values
-# Substrat
-# Organisms
-# Uniprot
-# Commentary
 
 # Save data in a json format file
 
-# List parametre souhaite
 # reorganisation du code et re-ecriture de la docstring qui n'est plus a jours!
 # =============================================================================
 
@@ -86,7 +74,7 @@ def list_all_ec_in_data() -> List:
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     """
     verifie que tous les parametre de la liste sont dans dict_proteins.data
-    S'ils sont dedans retourne TRUE
+    Donc si ils possedent une valeur dans ce cas retourne TRUE
 
     Parameters
     ----------
@@ -98,10 +86,9 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     Returns
     -------
     bool
-        reourne True ou False.
+        retourne True ou False.
 
     """
-    #TODO : concateniser
     for k_parameter in list_p:
         # n'accepte pas le if not ... and ... :
         if not (k_parameter in dict_proteins_data):
@@ -113,28 +100,36 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
 
 def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dict:
     """
-    dictionnaire contenant les index des substrats qui sont partager pour les
-    differrents parametre de cinetique demande
+    Dictionnaire qui rassemble les index des sbstrats qui sont present pour les
+    differents parametre souhaite (stocke sous forme de list de dict dans brenda)
+
+    Ex: Donne la list d'index des substrat qui sont present pour le KM et 
+    le TN si ce sont les deux type de parametre demande par l'utilisateur
+    {'diacetyl' : {'KM': [1,2,3], 'TN' : [4,5,6]}}
 
     Parameters
     ----------
     d_index : dict
-        DESCRIPTION.
+        dictionnaire ayant en clef les substrat et en valeur un dictionnaire
+        pour chaque parametre souhaite avec la liste des index dans la base de
+        donne de brenda ppour ce substrat.
     d_kinetic : dict
-        DESCRIPTION.
-    p_cine : str
+        base de donne de brenda pour leur parametre sous forme de dictionnaire
+    p_cine : parametre
 
     Returns
     -------
-    dict
-        DESCRIPTION.
+    d_index : dict(dict)
+        dictionnaire ayant en clef les substrat et en valeur un dictionnaire
+        pour chaque parametre souhaite avec la liste des index dans la base de
+        donne de brenda ppour ce substrat.
 
     """
     # dictionnaire index pour les differents substrats
     for i_subst in range(len(d_kinetic)):
         try:
             if not (str(d_kinetic[i_subst]['substrate']) in d_index):
-                d_index[str(d_kinetic[i_subst]['substrate'])] = {str(p_cine) : [i_subst]}
+                d_index[str(d_kinetic[i_subst]['substrate'])] = {p_cine : [i_subst]}
             elif not(p_cine in d_index[str(d_kinetic[i_subst]['substrate'])]):
                 d_index[str(d_kinetic[i_subst]['substrate'])].update({p_cine : [i_subst]})
             else:
@@ -361,10 +356,10 @@ def commun_lists(list1 : list, list2 : list) -> list:
     return list(set(list1) & set(list2))
 
 
-#Verifier que les parameter mis en argument appartient bien au dict
+#Faire une classe
 def parameter_sorting(list_parameter : list) -> Dict:
     """
-    Trie les paramtres en fonction de leur placement dans Brenda pour les recuperer
+    Trie les paramtres en de leur teype dans la base de Brenda
 
     Parameters
     ----------
@@ -377,12 +372,21 @@ def parameter_sorting(list_parameter : list) -> Dict:
         Classification des parametres souhaite par l'utilisateur
 
     """
-    all_parameter = {'p_primaire' : ["ec", "uniprot", "organism"],
-                 'p_kinetic' : ['KM', 'KKM', 'KI', 'TN', 'IC50'],
-                 'p_d_kinetic' : ['substrate', 'value', 'comment', 'units', 'refs']}
-    d_parameter_setting = {'p_primaire' : commun_lists(list_parameter, all_parameter['p_primaire']),
-                 'p_kinetic' : commun_lists(list_parameter, all_parameter['p_kinetic']),
-                 'p_d_kinetic' : commun_lists(list_parameter, all_parameter['p_d_kinetic'])}
+    all_parameter = {'p_str' : ["ec", "uniprot", "organism", "ID"],
+                 'p_list_dict' : ['KM', 'KKM', 'KI', 'TN', 'IC50', "ref", "TS",
+                                  "SY", "SU", "ST", "SP", "SA", "PU", "NSP",
+                                  "MW", "LO", "GI", "IN", "CL", "CF", "AP"],
+                 'key_p_list_dict' : ['substrate', 'value', 'comment', 'units',
+                                      'refs', 'data', 'chebi'],
+                 'p_set' : ["tissues", "SN", "RT", "RN", "RE"]}
+    d_parameter_setting = {'p_str' : commun_lists(list_parameter,
+                                                  all_parameter['p_str']),
+                 'p_list_dict' : commun_lists(list_parameter,
+                                              all_parameter['p_list_dict']),
+                 'key_p_list_dict' : commun_lists(list_parameter,
+                                                  all_parameter['key_p_list_dict']),
+                 'p_set' : commun_lists(list_parameter,
+                                        all_parameter['p_set'])}
     return d_parameter_setting
 
 
@@ -420,9 +424,13 @@ BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/'))
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
 #                  data_brenda(list_all_ec_in_data(),'KM'))
 
+"""
 list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
 DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
-
+"""
+for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
+    a = dict_proteins
+    
 # d_parameter_setting = parameter_sorting(list_p)
 # brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
 # brendaset = data_brenda(list_all_ec_in_data(), d_parameter_setting)
