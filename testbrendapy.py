@@ -181,30 +181,43 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
 
 def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
     """
-    
+    Cette fonction itère à travers la structure imbriquée du dictionnaire 
+    d'entrée et identifie les clés qui partagent des valeurs communes.
+    Elle renvoie une liste de dictionnaires, où chaque dictionnaire représente
+    un groupe de clés ayant les mêmes valeurs.
+
+    Recherche les clés dans un dictionnaire imbriqué ayant des valeurs
+    similaires.
 
     Parameters
     ----------
     main_dict : dict
-        DESCRIPTION.
+        Dictionnaire avec des sous-dictionnaire imbriques.
 
     Returns
     -------
     l_keys : List[Dict]
-        DESCRIPTION.
+        Liste de dictionnaire contenant les index des parametre qui ont des
+        commentaires similaires.
+
+    Exemples
+    --------
+    En reprenant l'exemple de sortie de la fonction d_comment_each_kinetic
+    [{'TN': '16', 'KM': '20'}]
 
     """
     l_keys = []
     inverse_dict = defaultdict(list)
 
     for key, sub_dict in main_dict.items():
-        for sub_key, value in sub_dict.items():
-            inverse_dict[value].append((key, sub_key))
+        for sub_key, comment in sub_dict.items():
+            inverse_dict[comment].append((key, sub_key))
 
     # Recup les clés ayant des valeurs communes
-    keys_with_common_values = {k: v for k, v in inverse_dict.items() if len(v) > 1}
-    for value, keys in keys_with_common_values.items():
+    keys_with_common_comment = {k: v for k, v in inverse_dict.items() if len(v) > 1}
+    for value, keys in keys_with_common_comment.items():
         l_keys.append(dict(keys))
+    print(l_keys)
     return l_keys
 
 
