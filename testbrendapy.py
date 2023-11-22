@@ -216,7 +216,6 @@ def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
     keys_with_common_comment = {k: v for k, v in inverse_dict.items() if len(v) > 1}
     for value, keys in keys_with_common_comment.items():
         l_keys.append(dict(keys))
-    print(l_keys)
     return l_keys
 
 
@@ -301,10 +300,9 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
 
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
-            #verifie que tous les parametre de la liste sont dans dict_proteins.data
-            #si ils sont dedans -> possede une valeur
-
-            if is_parameter_values(d_p_setting['p_str'], dict_proteins.data) and is_parameter_values(d_p_setting['p_list_dict'], dict_proteins.data):
+            #Verifie la presence de vaeur pour les parametres demande
+            get_params = [d_p_setting['p_str'], d_p_setting['p_list_dict']]
+            if all(is_parameter_values(param, dict_proteins.data) for param in get_params):
 
                 d_index_subst = {}
                 for cine in d_p_setting['p_list_dict']:
