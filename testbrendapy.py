@@ -18,9 +18,8 @@ from brendapy import BrendaParser, BrendaProtein
 
 # =============================================================================
 
-# Save data in a json format file
+# Expliquer dans les grande ligne le but du code
 
-# reorganisation du code et re-ecriture de la docstring qui n'est plus a jours!
 # =============================================================================
 
 def file_path_request(path_brenda : str) -> str:
@@ -224,33 +223,40 @@ def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
 def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
                         i_sub_d_brenda, p_kinetic):
     """
-    
+    Mets les informations extrait de Brenda au format JSON
+
+    Cette fonction extrait les données des BRENDA qui sont stockes dans 
+    dict_proteins en selectionnent les valeurs des parametres qui sont 
+    specifies dans d_p_setting et les ajoute a d_result.
+
+    Si une key nécessaire est manquante dans dict_proteins, elle est ignoree.
 
     Parameters
     ----------
     d_result : dict
-        DESCRIPTION.
+        Dictionnaire des resultats des données extraites de brenda
     d_p_setting : dict
-        DESCRIPTION.
+        Dictionnaire de paramètres de configuration.
     dict_proteins : OrderedDict
         Base de donnes de Brenda sous forme de dictionnaire.
     i_sub_d_brenda : TYPE
-        DESCRIPTION.
+        index sous dictionnaire de Brenda.
     p_kinetic : TYPE
-        DESCRIPTION.
+        parametre qui est stocke comme list(dict) comme KM ou TN ...
 
     Returns
     -------
     d_result : dict
-        DESCRIPTION.
+        Dictionnaire avec les donnees extraites de brenda.
 
     """
     #mettre **kwarg
-    for p in d_p_setting['p_str']:
-        d_result[str(p)] = dict_proteins[p]
+    for parameter in d_p_setting['p_str']:
+        d_result[str(parameter)] = dict_proteins[parameter]
     for parameter_k in d_p_setting['key_p_list_dict']:
         try:
-            d_result[str(p_kinetic + '_' + parameter_k)] = dict_proteins[p_kinetic][i_sub_d_brenda][parameter_k]
+            value_parameter = dict_proteins[p_kinetic][i_sub_d_brenda][parameter_k]
+            d_result[str(p_kinetic + '_' + parameter_k)] = value_parameter
         except KeyError:
             pass
             #Il peut y avoir un probleme avec le comment
@@ -297,13 +303,14 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
             #verifie que tous les parametre de la liste sont dans dict_proteins.data
             #si ils sont dedans -> possede une valeur
+
             if is_parameter_values(d_p_setting['p_str'], dict_proteins.data) and is_parameter_values(d_p_setting['p_list_dict'], dict_proteins.data):
 
                 d_index_subst = {}
                 for cine in d_p_setting['p_list_dict']:
                     #mettre toutes les parametre de cinetique ensemble pour les
                     #reorganise par substrat
-                    #s'ils ont le meme substrat on mets les information km et 
+                    #s'ils ont le meme substrat on mets les information km et
                     #tn ensemble sinon on les mets dans des dictionnaire differents
                     #pour eviter d'avoir des doublons
                     d_index_subst = find_shared_substrate(d_index_subst,
@@ -325,7 +332,7 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
                                                                      d_i_substr,
                                                                      dict_proteins.data)
                             l_index_comment = find_keys_with_similar_values(d_index_comment)
-                    
+
                     if d_index_comment:
                         for couple in l_index_comment:
                             d = {}
@@ -442,7 +449,7 @@ class DataSetBrenda:
 # =============================================================================
 # =============================================================================
 # =============================================================================
-# ====================="""========================================================
+# =============================================================================
 # =============================================================================
 # =============================================================================
 # =============================================================================
@@ -463,11 +470,12 @@ list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'valu
 
 # for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
 #     a = dict_proteins
-    
+
 d_parameter_setting = parameter_sorting(list_p)
 brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
 # brendaset = data_brenda(list_all_ec_in_data(), d_parameter_setting)
-# create_file_json(str(path_data_brenda+name_new_file_created('KM')), data_brenda(['1.1.1.1'], 'KM'))
+# create_file_json(str(path_data_brenda+name_new_file_created('KM')),
+#                  data_brenda(['1.1.1.1'], 'KM'))
 
 # print(BRENDA_PARSER.BRENDA_KEYS)
 
