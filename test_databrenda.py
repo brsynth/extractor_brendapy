@@ -8,6 +8,7 @@ Created on Tue Oct 10 13:50:57 2023
 import unittest
 import testbrendapy
 
+# modifier les test pour le faire sur les plus petit fonction
 class TestDataBrenda(unittest.TestCase):
 
     def test_good_nb_data(self):
