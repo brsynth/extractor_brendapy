@@ -24,7 +24,7 @@ from brendapy import BrendaParser, BrendaProtein
 
 def file_path_request(path_brenda : str) -> str:
     """
-    fourni le chemin jsuqu'au fichier qui contient tous les data de brenda au
+    fourni le chemin jusqu'au fichier qui contient tous les data de brenda au
     format txt
 
     Parameters
