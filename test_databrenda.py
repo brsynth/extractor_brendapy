@@ -27,21 +27,48 @@ class TestDataBrenda(unittest.TestCase):
     def test_d_comment_each_kinetic(self):
         pass
 
-    def test_find__keys_with_similar_values(self):
+    def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
                   'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
                          '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
         result = [{'TN': '16', 'KM': '20'}]
-        self.assertEqual(testbrendapy.find__keys_with_similar_values(d_test), result)
+        self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
+
+    def test2_find_keys_with_similar_values(self):
+        d_test = {'TN': {'16': 'mutant N107D'},
+                  'KM': {'20': 'mutant N107D',
+                         '21': 'mutant N107L'},
+                  'KKM': {'2': 'mutant N107D',
+                         '1': 'mutant N107L'}}
+        result = [{'TN': '16', 'KM': '20', 'KKM': '2'}, {'KM': '21', 'KKM': '1'}]
+        self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
 
     def test_create_subdict_json(self):
         pass
     def test_create_file_json(self):
         pass
+
     def test_commun_lists(self):
         pass
-    def test_parameter_sorting(self):
+
+    def test2_commun_lists(self):
         pass
+
+    def test_parameter_sorting(self):
+        l1 = ['ec', 'uniprot', 'value', 'units', 'KM']
+        result = {'p_str': ['uniprot', 'ec'],
+                  'p_list_dict': ['KM'],
+                  'key_p_list_dict': ['units', 'value'],
+                  'p_set': []}
+        self.assertEqual(testbrendapy.parameter_sorting(l1), result)
+
+    def test2_parameter_sorting(self):
+        l2 = ['ec', 'uniprot', 'value', 'units', 'KM', 'IC50', 'tissues']
+        result = {'p_str': ['uniprot', 'ec'],
+                  'p_list_dict': ['IC50', 'KM'],
+                  'key_p_list_dict': ['units', 'value'],
+                  'p_set': ['tissues']}
+        self.assertEqual(testbrendapy.parameter_sorting(l2), result)
 
 
 if __name__ == '__main__':
