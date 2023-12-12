@@ -49,10 +49,14 @@ class TestDataBrenda(unittest.TestCase):
         pass
 
     def test_commun_lists(self):
-        pass
+        l1 = ['un', 'deux', 'trois']
+        l2 = ['un', 'quatre']
+        self.assertEqual(testbrendapy.commun_lists(l1,l2), ['un'])
 
     def test2_commun_lists(self):
-        pass
+        l1 = ['deux', 'trois']
+        l2 = ['un', 'quatre']
+        self.assertEqual(testbrendapy.commun_lists(l1,l2), [])
 
     def test_parameter_sorting(self):
         l1 = ['ec', 'uniprot', 'value', 'units', 'KM']
@@ -60,15 +64,20 @@ class TestDataBrenda(unittest.TestCase):
                   'p_list_dict': ['KM'],
                   'key_p_list_dict': ['units', 'value'],
                   'p_set': []}
-        self.assertEqual(testbrendapy.parameter_sorting(l1), result)
+        self.assertDictEqual(testbrendapy.parameter_sorting(l1), result)
 
     def test2_parameter_sorting(self):
         l2 = ['ec', 'uniprot', 'value', 'units', 'KM', 'IC50', 'tissues']
         result = {'p_str': ['uniprot', 'ec'],
-                  'p_list_dict': ['IC50', 'KM'],
+                  'p_list_dict': ['KM', 'IC50'],
                   'key_p_list_dict': ['units', 'value'],
                   'p_set': ['tissues']}
-        self.assertEqual(testbrendapy.parameter_sorting(l2), result)
+        self.assertDictEqual(testbrendapy.parameter_sorting(l2), result)
+
+    # def test3_parameter_sorting(self):
+    #     l3 = ['ec', 'uniprot', 'value', 'units', 'KM', 'tissues', 'intrus']
+    #     result = 'Erreur'
+    #     self.assertEqual(testbrendapy.parameter_sorting(l3), result)
 
 
 if __name__ == '__main__':
