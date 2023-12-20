@@ -7,6 +7,7 @@ Created on Tue Oct 10 13:50:57 2023
 """
 import unittest
 import testbrendapy
+from collections import OrderedDict
 
 class TestDataBrenda(unittest.TestCase):
 
@@ -15,13 +16,30 @@ class TestDataBrenda(unittest.TestCase):
                                                 'brenda_2023_1.txt')
         self.assertEqual(result, '/home/nparis/brenda_enzyme/brenda_2023_1.txt')
 
-    def test2_file_path_request(self):
-        pass
-
-    def test_list_all_ec_in_data(self):
-        pass
     def test_is_parameter_values(self):
-        pass
+        dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
+                                 ('test3', 'Homo sapiens'), ('test4', None),
+                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                 ('test6', set())])
+        list_test = ['test1','test2', 'test3', 'test5']
+        self.assertTrue(testbrendapy.is_parameter_values(list_test, dict_test))
+
+    def test2_is_parameter_values(self):
+        dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
+                                 ('test3', 'Homo sapiens'), ('test4', None),
+                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                 ('test6', set())])
+        list_test = ['test2', 'test4']
+        self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
+
+    def test3_is_parameter_values(self):
+        dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
+                                 ('test3', 'Homo sapiens'), ('test4', None),
+                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                 ('test6', set())])
+        list_test = ['test1','test5', 'test6']
+        self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
+
     def test_find_shared_substrate(self):
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
@@ -31,8 +49,6 @@ class TestDataBrenda(unittest.TestCase):
         d_result = {'L-threonine': {'TN': [0, 1]}}
         self.assertDictEqual(testbrendapy.find_shared_substrate({}, d_test, parameter), d_result)
 
-    def test_d_comment_each_kinetic(self):
-        pass
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
                   'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
@@ -49,9 +65,6 @@ class TestDataBrenda(unittest.TestCase):
         result = [{'TN': '16', 'KM': '20', 'KKM': '2'}, {'KM': '21', 'KKM': '1'}]
         self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
 
-    def test_create_subdict_json(self):
-        pass
-
     def test_commun_lists(self):
         l1 = ['un', 'deux', 'trois']
         l2 = ['un', 'quatre']
@@ -64,7 +77,7 @@ class TestDataBrenda(unittest.TestCase):
 
     def test_parameter_sorting(self):
         l1 = ['ec', 'uniprot', 'value', 'units', 'KM']
-        result = {'p_str': ['uniprot', 'ec'],
+        result = {'p_str': ['ec','uniprot'],
                   'p_list_dict': ['KM'],
                   'key_p_list_dict': ['value', 'units'],
                   'p_set': []}
@@ -72,7 +85,7 @@ class TestDataBrenda(unittest.TestCase):
 
     def test2_parameter_sorting(self):
         l2 = ['ec', 'uniprot', 'value', 'units', 'KM', 'IC50', 'tissues']
-        result = {'p_str': ['uniprot', 'ec'],
+        result = {'p_str': ['ec','uniprot'],
                   'p_list_dict': ['KM', 'IC50'],
                   'key_p_list_dict': ['value', 'units'],
                   'p_set': ['tissues']}
