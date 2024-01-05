@@ -24,8 +24,7 @@ from brendapy import BrendaParser, BrendaProtein
 
 def file_path_request(path_brenda : str, file_name_txt : str) -> str:
     """
-    fourni le chemin jusqu'au fichier qui contient tous les data de brenda au
-    format txt
+    Provides the path to the file containing all brenda data in txt format
 
     Parameters
     ----------
@@ -71,7 +70,7 @@ def list_all_ec_in_data() -> List:
 
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     """
-    verifie que tous les parametre de la liste sont dans dict_proteins.data
+    Verifie que tous les parametre de la liste sont dans dict_proteins.data
     Donc si ils possedent une valeur dans ce cas retourne TRUE
 
     Parameters
