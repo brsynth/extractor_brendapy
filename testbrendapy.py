@@ -187,8 +187,15 @@ def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
     Elle renvoie une liste de dictionnaires, où chaque dictionnaire représente
     un groupe de clés ayant les mêmes valeurs.
 
-    Recherche les clés dans un dictionnaire imbriqué ayant des valeurs
+    Recherche les clés dans un dictionnaire imbrique ayant des valeurs
     similaires.
+
+    This function iterates through the nested structure of the input 
+    and identifies keys that share common values.
+    It returns a list of dictionaries, where each dictionary represents
+    a group of keys with the same values.
+
+    Finds keys in a nested dictionary with similar values
 
     Parameters
     ----------
