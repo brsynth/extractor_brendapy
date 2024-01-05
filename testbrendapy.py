@@ -101,6 +101,9 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
     Dictionnaire qui rassemble les index des substrats qui sont present pour les
     differents parametre souhaite (stocke sous forme de list de dict dans brenda)
 
+    Dictionary that gathers the indexes of substrates that are present for the
+    desired parameters (stored as a dict list in brenda)
+
     Ex: Donne la list d'index des substrat qui sont present pour le KM et 
     le TN si ce sont les deux type de parametre demande par l'utilisateur
     {'diacetyl' : {'KM': [1,2,3], 'TN' : [4,5,6]}}
