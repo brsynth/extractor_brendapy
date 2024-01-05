@@ -22,7 +22,7 @@ from brendapy import BrendaParser, BrendaProtein
 
 # =============================================================================
 
-def file_path_request(path_brenda : str) -> str:
+def file_path_request(path_brenda : str, file_name_txt : str) -> str:
     """
     fourni le chemin jusqu'au fichier qui contient tous les data de brenda au
     format txt
@@ -38,7 +38,6 @@ def file_path_request(path_brenda : str) -> str:
         chemin avec le noms du fichier txt inclus.
 
     """
-    file_name_txt = 'brenda_2023_1.txt'
     return str(path_brenda+file_name_txt)
 
 
@@ -80,7 +79,7 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     list_p : list
         liste des parametre a verifier.
     dict_proteins_data : OrderedDict
-        ictionnaire ou il y a tous les parametre connu dans Brenda.
+        Dictionnaire ou il y a tous les parametre connu dans Brenda.
 
     Returns
     -------
@@ -99,7 +98,7 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
 
 def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dict:
     """
-    Dictionnaire qui rassemble les index des sbstrats qui sont present pour les
+    Dictionnaire qui rassemble les index des substrats qui sont present pour les
     differents parametre souhaite (stocke sous forme de list de dict dans brenda)
 
     Ex: Donne la list d'index des substrat qui sont present pour le KM et 
@@ -111,7 +110,7 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
     d_index : dict
         dictionnaire ayant en clef les substrat et en valeur un dictionnaire
         pour chaque parametre souhaite avec la liste des index dans la base de
-        donne de brenda ppour ce substrat.
+        donne de brenda pour ce substrat.
     d_kinetic : dict
         base de donne de brenda pour leur parametre sous forme de dictionnaire
     p_cine : parametre
@@ -149,7 +148,7 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
         
     d_i_substr : dict
         dictionnaire pour chaque parametre souhaite avec la liste des index 
-        dans la base de donne de brenda ppour ce substrat.
+        dans la base de donne de brenda pour ce substrat.
     dict_proteins : OrderedDict
         Base de donnes de Brenda sous forme de dictionnaire
 
@@ -165,6 +164,9 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                     '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
 
     """
+    # print('d_index :', d_index)
+    # print('d_i_substr :', d_i_substr)
+    # print('dict_proteins :', dict_proteins)
     for kinetic, l_index in d_i_substr.items():
         for index in l_index:
             try:
@@ -228,7 +230,15 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     dict_proteins en selectionnent les valeurs des parametres qui sont 
     specifies dans d_p_setting et les ajoute a d_result.
 
-    Si une key nécessaire est manquante dans dict_proteins, elle est ignoree.
+    Si une key necessaire est manquante dans dict_proteins, elle est ignoree.
+
+    Put information extracted from Brenda in JSON format
+
+    This function extracts data from BRENDAs stored in 
+    dict_proteins by selecting the parameter values specified in 
+    specified in d_p_setting and adds them to d_result.
+
+    If a required key is missing in dict_proteins, it is ignored.
 
     Parameters
     ----------
@@ -392,10 +402,15 @@ def commun_lists(list1 : list, list2 : list) -> list:
     return list(set(list1) & set(list2))
 
 
+def is_parameter_exist(d_parameter : dict, l_parameter : list):
+    
+    pass
+
+
 #Faire une classe
 def parameter_sorting(list_parameter : list) -> Dict:
     """
-    Trie les paramtres en de leur teype dans la base de Brenda
+    Trie les paramtres en de leur type dans la base de Brenda
 
     Parameters
     ----------
@@ -425,7 +440,7 @@ def parameter_sorting(list_parameter : list) -> Dict:
                                         all_parameter['p_set'])}
     return d_parameter_setting
 
-
+'''
 class DataSetBrenda:
     def __init__(self, list_paramater : list, path_data_brenda : str,
                  list_ec : list = []):
@@ -450,8 +465,8 @@ class DataSetBrenda:
         create_file_json(self.get_path_set_brend(),
                          data_brenda(self.get_list_ec(),
                                      self.get_cinetique_parameter()))
+'''
 
-
 # =============================================================================
 # =============================================================================
 # =============================================================================
@@ -463,7 +478,8 @@ class DataSetBrenda:
 # =============================================================================
 # =============================================================================
 
-BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/'))
+BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/',
+                                               'brenda_2023_1.txt'))
 
 
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
@@ -471,8 +487,9 @@ BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/'))
 
 
 list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
-DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
+# DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
 
+# b = data_brenda(['1.1.1.103'], parameter_sorting(list_p))
 
 # for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
 #     a = dict_proteins
