@@ -55,7 +55,7 @@ def name_new_file_created() -> str:
     return 'setbrenda_' + formatagedate + '.json'
 
 
-def list_all_ec_in_data() -> List:
+def list_all_ec_in_data() -> list:
     """
     Gives all known EC in brenda
 
@@ -182,7 +182,7 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
     return d_index
 
 
-def find_keys_with_similar_values(main_dict: dict) -> List[Dict]:
+def find_keys_with_similar_values(main_dict: dict) -> list[dict]:
     """
     Cette fonction itère à travers la structure imbriquée du dictionnaire 
     d'entrée et identifie les clés qui partagent des valeurs communes.
@@ -281,7 +281,7 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     return d_result
 
 
-def data_brenda(list_ec : list, d_p_setting : dict) -> List[Dict]:
+def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
     """
     List containing a dictionary for each protein with the parameters
     selected
@@ -417,7 +417,7 @@ def is_parameter_exist(d_parameter : dict, l_parameter : list):
 
 
 #Faire une classe
-def parameter_sorting(list_parameter : list) -> Dict:
+def parameter_sorting(list_parameter : list) -> dict:
     """
     Trie les paramtres en de leur type dans la base de Brenda
 
@@ -449,32 +449,6 @@ def parameter_sorting(list_parameter : list) -> Dict:
                                         all_parameter['p_set'])}
     return d_parameter_setting
 
-'''
-class DataSetBrenda:
-    def __init__(self, list_paramater : list, path_data_brenda : str,
-                 list_ec : list = []):
-        self.d_parameter_setting = parameter_sorting(list_paramater)
-        #noms du fichier avec la date et heure de creation ...
-        self.path_set_brend = path_data_brenda + name_new_file_created()
-
-        if list_ec:
-            self.list_ec = list_ec
-        else:
-            self.list_ec = list_all_ec_in_data()
-
-    def get_cinetique_parameter(self):
-        return self.d_parameter_setting
-    def get_path_set_brend(self):
-        return self.path_set_brend
-    def get_list_ec(self):
-        return self.list_ec
-
-    #@property -> enlever () apres le run dans l'appel de fonction
-    def run(self):
-        create_file_json(self.get_path_set_brend(),
-                         data_brenda(self.get_list_ec(),
-                                     self.get_cinetique_parameter()))
-'''
 
 # =============================================================================
 # =============================================================================
