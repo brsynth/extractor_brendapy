@@ -5,4 +5,4 @@ Created on Tue Oct 17 13:51:20 2023
 
 @author: nparis
 """
-import testbrendapy
+from .datasetbrenda import DataSetBrenda
