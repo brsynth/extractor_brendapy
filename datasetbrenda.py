@@ -32,3 +32,8 @@ class DataSetBrenda:
         testbrendapy.create_file_json(self.get_path_set_brend(),
                          testbrendapy.data_brenda(self.get_list_ec(),
                                      self.get_cinetique_parameter()))
+
+
+
+# list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
+# DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
