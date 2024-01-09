@@ -3,6 +3,5 @@
 """
 Created on Tue Oct 17 13:51:20 2023
 
-@author: nparis
+@author: noparis
 """
-from .datasetbrenda import DataSetBrenda
