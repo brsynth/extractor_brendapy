@@ -1,0 +1,5 @@
+name : brenda enzyme
+dependencies:
+-python
+-pytest
+-pytest-cov
