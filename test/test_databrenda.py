@@ -16,7 +16,7 @@ class TestDataBrenda(unittest.TestCase):
         result = testbrendapy.file_path_request('/home/nparis/brenda_enzyme/',
                                                 'brenda_2023_1.txt')
         self.assertEqual(result, '/home/nparis/brenda_enzyme/brenda_2023_1.txt')
-        
+
     def test_name_new_file_created(self):
         date_time = datetime.now()
         formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
@@ -82,26 +82,25 @@ class TestDataBrenda(unittest.TestCase):
         l2 = ['un', 'quatre']
         self.assertEqual(testbrendapy.commun_lists(l1,l2), [])
 
-    # def test_parameter_sorting(self):
-    #     l1 = ['ec', 'uniprot', 'value', 'units', 'KM']
-    #     result = {'p_str': ['ec','uniprot'],
-    #               'p_list_dict': ['KM'],
-    #               'key_p_list_dict': ['value', 'units'],
-    #               'p_set': []}
-    #     self.assertDictEqual(testbrendapy.parameter_sorting(l1), result)
+    def test_parameter_sorting(self):
+        l1 = ['ec', 'uniprot', 'value', 'units', 'KM']
+        result = {'p_str': ['ec','uniprot'],
+                  'p_list_dict': ['KM'],
+                  'key_p_list_dict': ['value', 'units'],
+                  'p_set': []}
+        d_test = testbrendapy.parameter_sorting(l1)
+        for key in result :
+            self.assertListEqual(sorted(d_test[key]), sorted(result[key]))
 
-    # def test2_parameter_sorting(self):
-    #     l2 = ['ec', 'uniprot', 'value', 'units', 'KM', 'IC50', 'tissues']
-    #     result = {'p_str': ['ec','uniprot'],
-    #               'p_list_dict': ['KM', 'IC50'],
-    #               'key_p_list_dict': ['value', 'units'],
-    #               'p_set': ['tissues']}
-    #     self.assertDictEqual(testbrendapy.parameter_sorting(l2), result)
-
-    # def test3_parameter_sorting(self):
-    #     l3 = ['ec', 'uniprot', 'value', 'units', 'KM', 'tissues', 'intrus']
-    #     result = 'Erreur'
-    #     self.assertEqual(testbrendapy.parameter_sorting(l3), result)
+    def test2_parameter_sorting(self):
+        l2 = ['ec', 'uniprot', 'value', 'units', 'KM', 'IC50', 'tissues']
+        result = {'p_str': ['ec','uniprot'],
+                  'p_list_dict': ['KM', 'IC50'],
+                  'key_p_list_dict': ['value', 'units'],
+                  'p_set': ['tissues']}
+        d_test = testbrendapy.parameter_sorting(l2)
+        for key in result :
+            self.assertListEqual(sorted(d_test[key]), sorted(result[key]))
 
 
 if __name__ == '__main__':
