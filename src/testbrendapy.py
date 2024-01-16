@@ -5,7 +5,7 @@ Created on Thu Oct  5 13:53:41 2023
 
 @author: nparis
 """
-from typing import Dict, List
+# from typing import Dict, List
 import json
 
 from collections import defaultdict
@@ -18,7 +18,8 @@ from brendapy import BrendaParser, BrendaProtein
 
 # =============================================================================
 
-# Expliquer dans les grande ligne le but du code
+# Pour cree une base de donnees qui servira comme jeux d'entrainement pour
+# du machine learning
 
 # =============================================================================
 
