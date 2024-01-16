@@ -13,7 +13,7 @@ from os import getcwd as os_getcwd
 from brs_utils import add_logger_args
 
 DEFAULT_ARGS = {
-    'list_parameters' : [],
+    'list_parameters' : ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value'],
     'path_file_databrenda': '',
 }
 
@@ -50,7 +50,7 @@ def add_arguments(parser):
     parser.add_argument(
         'list_parameters',
         type= list,
-        help='',
+        help='list parameters for data set',
     )
 
     parser.add_argument(
