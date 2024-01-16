@@ -370,7 +370,7 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
     return results
 
 
-def create_file_json(path_json : str, data : list[Dict]):
+def create_file_json(path_json : str, data : list[dict]):
     """
     Creates the json file and writes information on the various proteins with
     the parameters selected inside
@@ -463,14 +463,14 @@ def parameter_sorting(list_parameter : list) -> dict:
 # =============================================================================
 
 BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/',
-                                               'brenda_2023_1.txt'))
+                                                'brenda_2023_1.txt'))
 
 
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
 #                  data_brenda(list_all_ec_in_data(),'KM'))
 
 
-list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
+# list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
 # DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
 
 # b = data_brenda(['1.1.1.103'], parameter_sorting(list_p))
