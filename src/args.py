@@ -8,9 +8,9 @@ from argparse import (
     ArgumentParser,
     # BooleanOptionalAction
 )
-from os import getcwd as os_getcwd
+# from os import getcwd as os_getcwd
 
-from brs_utils import add_logger_args
+# from brs_utils import add_logger_args
 
 DEFAULT_ARGS = {
     'list_parameters' : ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value'],
@@ -56,6 +56,6 @@ def add_arguments(parser):
     parser.add_argument(
         'path_file_databrenda',
         type= str,
-        help='',
+        help='path to the file containing the brenda database',
     )
     return parser
