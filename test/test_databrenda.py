@@ -27,7 +27,6 @@ class TestDataBrenda(unittest.TestCase):
         #Verifie que la list n'est pas vide
         self.assertNotEqual(testbrendapy.list_all_ec_in_data(), [])
 
-
     def test_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
                                  ('test3', 'Homo sapiens'), ('test4', None),
@@ -50,6 +49,14 @@ class TestDataBrenda(unittest.TestCase):
                                  ('test5', {1: {'t1': 'b1', 't2': 123}}),
                                  ('test6', set())])
         list_test = ['test1','test5', 'test6']
+        self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
+
+    def test4_is_parameter_values(self):
+        dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
+                                 ('test3', 'Homo sapiens'), ('test4', None),
+                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                 ('test6', set())])
+        list_test = ['test1','test5', 'test7']
         self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
 
     def test_find_shared_substrate(self):
