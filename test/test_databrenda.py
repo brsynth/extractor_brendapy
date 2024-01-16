@@ -23,6 +23,11 @@ class TestDataBrenda(unittest.TestCase):
         result = 'setbrenda_' + formatagedate + '.json'
         self.assertEqual(testbrendapy.name_new_file_created(), result)
 
+    def test_list_all_ec_in_data(self):
+        #Verifie que la list n'est pas vide
+        self.assertNotEqual(testbrendapy.list_all_ec_in_data(), [])
+
+
     def test_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
                                  ('test3', 'Homo sapiens'), ('test4', None),
