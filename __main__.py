@@ -5,8 +5,8 @@
 """
 
 import sys
-from .args import build_args_parser
-from .datasetbrenda import DataSetBrenda
+from .src.args import build_args_parser
+# from .datasetbrenda import DataSetBrenda
 
 
 #DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
