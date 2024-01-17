@@ -5,7 +5,8 @@ Created on Mon Dec 11 17:10:09 2023
 
 @author: nparis
 """
-from .testbrendapy import parameter_sorting, name_new_file_created, list_all_ec_in_data, data_brenda, create_file_json 
+from .testbrendapy import parameter_sorting, name_new_file_created
+from .testbrendapy import list_all_ec_in_data, data_brenda, create_file_json
 # from brendapy import BrendaParser, BrendaProtein
 
 class DataSetBrenda:
@@ -29,7 +30,7 @@ class DataSetBrenda:
 
     #@property -> enlever () apres le run dans l'appel de fonction
     def run(self):
-        create_file_json(self.get_path_set_brend(),+
+        create_file_json(self.get_path_set_brend(),
                          data_brenda(self.get_list_ec(),
                                      self.get_cinetique_parameter()))
 
