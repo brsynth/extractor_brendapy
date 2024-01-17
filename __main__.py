@@ -39,4 +39,12 @@ def main():
     args = parser.parse_args(sys.argv[1], sys.argv[2])
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except TypeError:
+        if not sys.argv[1:]:
+            list_parameter : list = input('liste des elements souhaite : ')
+            path_data_brenda : str = input('chemin vers le fichier brenda : ')
+            main(list_parameter, path_data_brenda)
+    finally:
+        print('The End')
