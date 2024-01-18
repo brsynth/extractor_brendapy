@@ -9,6 +9,9 @@ import unittest
 from src import testbrendapy
 from collections import OrderedDict
 from datetime import datetime
+import os
+import json
+from tempfile import TemporaryDirectory
 
 class TestDataBrenda(unittest.TestCase):
 
@@ -83,6 +86,22 @@ class TestDataBrenda(unittest.TestCase):
                          '1': 'mutant N107L'}}
         result = [{'TN': '16', 'KM': '20', 'KKM': '2'}, {'KM': '21', 'KKM': '1'}]
         self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
+
+    def test_create_file_json(self):
+        with TemporaryDirectory() as temp_dir:
+            # Rpertoire temporaire
+            json_path = os.path.join(temp_dir, "test.json")
+
+            test_data = [{"1.1.1.1": "name", "substrat": 25},
+                         {"2.2.2.2": "name", "substrat": 30},
+                         {"3.3.3.3": "name", "substrat": 22}]
+
+            testbrendapy.create_file_json(json_path, test_data)
+            self.assertTrue(os.path.exists(json_path))
+
+            with open(json_path, "r", encoding='utf-8') as file:
+                loaded_data = json.load(file)
+            self.assertEqual(test_data, loaded_data)
 
     def test_commun_lists(self):
         l1 = ['un', 'deux', 'trois']
