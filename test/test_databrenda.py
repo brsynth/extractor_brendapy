@@ -71,6 +71,17 @@ class TestDataBrenda(unittest.TestCase):
         d_result = {'L-threonine': {'TN': [0, 1]}}
         self.assertDictEqual(testbrendapy.find_shared_substrate({}, d_test, parameter), d_result)
 
+    def test2_find_shared_substrate(self):
+        d_temporaire = {'L-threonine': {'KM': [0]}}
+        parameter = 'TN'
+        d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
+                   'value': 46.7, 'substrate': 'L-threonine'},
+                  {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
+                   'value': 47.3, 'substrate': 'L-threonine'}]
+        d_result = {'L-threonine': {'KM': [0], 'TN': [0, 1]}}
+        self.assertDictEqual(testbrendapy.find_shared_substrate(d_temporaire, d_test,
+                                                                parameter), d_result)
+
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
                   'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
