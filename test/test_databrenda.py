@@ -87,14 +87,34 @@ class TestDataBrenda(unittest.TestCase):
         result = [{'TN': '16', 'KM': '20', 'KKM': '2'}, {'KM': '21', 'KKM': '1'}]
         self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
 
+    def test_create_subdict_json(self):
+        d_temporaire = {}
+        d_p_setting = {'p_str': ['param1', 'param2'],
+                       'key_p_list_dict': ['key1', 'key2']}
+        dict_proteins = {'param1': 'value1',
+                         'param2': 'value2',
+                         'kinetic_value': {'sub_d_brenda_value':
+                                           {'key1': 'result1',
+                                            'key2': 'result2'}}}
+        p_kinetic = 'kinetic_value'
+        i_sub_d_brenda = 'sub_d_brenda_value'
+
+        test = testbrendapy.create_subdict_json(d_temporaire, d_p_setting,
+                                                dict_proteins, i_sub_d_brenda,
+                                                p_kinetic)
+        result = {'param1': 'value1','param2': 'value2',
+                  'kinetic_value_key1': 'result1','kinetic_value_key2': 'result2'}
+
+        self.assertEqual(test, result)
+
     def test_create_file_json(self):
         with TemporaryDirectory() as temp_dir:
-            # Rpertoire temporaire
+            # Repertoire temporaire
             json_path = os.path.join(temp_dir, "test.json")
 
-            test_data = [{"1.1.1.1": "name", "substrat": 25},
-                         {"2.2.2.2": "name", "substrat": 30},
-                         {"3.3.3.3": "name", "substrat": 22}]
+            test_data = [{"1.1.1.1": "ec", "substrat": "name1"},
+                         {"2.2.2.2": "ec", "substrat": "name2"},
+                         {"3.3.3.3": "ec", "substrat": "name3"}]
 
             testbrendapy.create_file_json(json_path, test_data)
             self.assertTrue(os.path.exists(json_path))
