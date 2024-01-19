@@ -34,28 +34,28 @@ def build_args_parser(
 
 def add_arguments(parser):
     '''
-    
+    Build and return the ArgumentParser
 
-    Parameters
-    ----------
-    parser : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    parser : TYPE
-        DESCRIPTION.
-
+    parser.add_argument(
+        '',
+        type= ,
+        help='',
+    )
     '''
     parser.add_argument(
         'list_parameters',
         type= list,
-        help='list parameters for data set',
+        help='List of elements',
     )
 
     parser.add_argument(
         'path_file_databrenda',
         type= str,
-        help='path to the file containing the brenda database',
+        help='Path to the Brenda file',
     )
+    parser.add_argument(
+        '-d', '--debug',
+        action='store_true',
+        help='Enable debug mode'
+        )
     return parser
