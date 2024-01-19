@@ -82,6 +82,18 @@ class TestDataBrenda(unittest.TestCase):
         self.assertDictEqual(testbrendapy.find_shared_substrate(d_temporaire, d_test,
                                                                 parameter), d_result)
 
+    def test_d_comment_each_kinetic(self):
+       d_index = {}
+       d_i_substr = {'TN': [16], 'KM': [20, 21]}
+       dict_proteins = {'TN': {16: {'comment': 'pH 7.0, 25°C, mutant N107D <17>'}},
+                        'KM': {20: {'comment': 'pH 7.0, 25°C, mutant N107D <17>'},
+                               21: {'comment': 'pH 7.0, 25°C, mutant N107L <17>'}}}
+       result = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
+                 'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
+                        '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
+       self.assertEqual(testbrendapy.d_comment_each_kinetic(d_index, d_i_substr,
+                                                            dict_proteins), result)
+
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
                   'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
