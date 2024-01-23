@@ -13,8 +13,8 @@ In the terminal
 2. Activate conda env
 
 ```
-list_parameter=[ _list of parameters below_ ]
-path_files= _path to the folder containing data_brenda.txt and file result json_
+list_parameter=[ _list-of-parameters-below_ ]
+path_files= _path_ _to_ _the_ _folder_ _containing_ _data_brenda.txt_ _and_ _file_ _result_ _json._
 python -m brenda_enz_code list_parameter path_files
 ```
 
