@@ -7,10 +7,7 @@
 import sys
 from .src.args import build_args_parser
 from .src import DataSetBrenda
-# from .datasetbrenda import DataSetBrenda
 
-
-#DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
 #Mettre en premier la liste puis le chemin
 #Rajouter le lien ou les data genere doivnt etre depose 
 
@@ -47,7 +44,8 @@ def main():
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-        DataSetBrenda(sys.argv[1], sys.argv[2]).run()
+        DataSetBrenda(sys.argv[1:]).run()
+        #DataSetBrenda(sys.argv[1], sys.argv[2]).run()
     except TypeError:
         if not sys.argv[1:]:
             list_parameter : list = input('List of elements : ')
