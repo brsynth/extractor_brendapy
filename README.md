@@ -1,8 +1,8 @@
 Brenda Enzyme
 =============
 
-Creating a json file, with a dataset from Brenda using the 
-[brendapy parser](https://github.com/matthiaskoenig/brendapy)
+Creating a json file, with a dataset from [Brenda](https://www.brenda-enzymes.org/)
+using the [brendapy parser](https://github.com/matthiaskoenig/brendapy)
 
 Usage
 -----
@@ -13,9 +13,9 @@ In the terminal
 2. Activate conda env
 
 ```
-list_parameter=[]
-path_file_brenda=
-python -m brenda_enz_code list_parameter path_file_brenda
+list_parameter=[ _list of parameters below_ ]
+path_files= _path to the folder containing data_brenda.txt and file result json_
+python -m brenda_enz_code list_parameter path_files
 ```
 
 List of possible parameters :
