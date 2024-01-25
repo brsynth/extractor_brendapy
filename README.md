@@ -11,8 +11,12 @@ In the terminal
 
 1. Create conda env
 2. Activate conda env
-list_parameter= _list-of-parameters-below_
-path_files= _path_ _to_ _the_ _folder_ _containing_ _data_brenda.txt_ _and_ _file_ _result_ _json._
+
+
+list_parameter : _list_ _of_ _parameters_ _below_
+
+path_files : _path_ _to_ _the_ _folder_ _containing_ _data_brenda.txt_ _and_
+_file_ _result_ _json._
 
 ```
 list_parameter=[]
