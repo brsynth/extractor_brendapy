@@ -23,22 +23,22 @@ from brendapy import BrendaParser, BrendaProtein
 
 # =============================================================================
 
-def file_path_request(path_brenda : str, file_name_txt : str) -> str:
-    """
-    Provides the path to the file containing all brenda data in txt format
+# def file_path_request(path_brenda : str, file_name_txt : str) -> str:
+#     """
+#     Provides the path to the file containing all brenda data in txt format
 
-    Parameters
-    ----------
-    path_brenda : str
-        chemin jusqu'au dossier ou est situer le fichier txt.
+#     Parameters
+#     ----------
+#     path_brenda : str
+#         chemin jusqu'au dossier ou est situer le fichier txt.
 
-    Returns
-    -------
-    str
-        chemin avec le noms du fichier txt inclus.
+#     Returns
+#     -------
+#     str
+#         chemin avec le noms du fichier txt inclus.
 
-    """
-    return str(path_brenda+file_name_txt)
+#     """
+#     return str(path_brenda+file_name_txt)
 
 
 def name_new_file_created() -> str:
@@ -165,7 +165,6 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
             'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
              'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
                     '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
-
     """
     # print('d_index :', d_index)
     # print('d_i_substr :', d_i_substr)
@@ -335,7 +334,6 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
                                                           dict_proteins.data[cine],
                                                           cine)
 
-                # TODO : les substrats presents plusieurs fois, ayant des comment differents
                 for substr, d_i_substr in d_index_subst.items():
                     d={}
                     d_index_comment = {}
@@ -412,9 +410,8 @@ def commun_lists(list1 : list, list2 : list) -> list:
     return list(set(list1) & set(list2))
 
 
-def is_parameter_exist(d_parameter : dict, l_parameter : list):
-    
-    pass
+# def is_parameter_exist(d_parameter : dict, l_parameter : list):
+#     pass
 
 
 #Faire une classe
@@ -462,8 +459,7 @@ def parameter_sorting(list_parameter : list) -> dict:
 # =============================================================================
 # =============================================================================
 
-BRENDA_PARSER = BrendaParser(file_path_request('/home/nparis/brenda_enzyme/',
-                                                'brenda_2023_1.txt'))
+BRENDA_PARSER = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
 
 
 # create_file_json(str(path_data_brenda+name_new_file_created('KM')),
