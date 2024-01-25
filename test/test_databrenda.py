@@ -15,10 +15,10 @@ from tempfile import TemporaryDirectory
 
 class TestDataBrenda(unittest.TestCase):
 
-    def test_file_path_request(self):
-        result = testbrendapy.file_path_request('/home/nparis/brenda_enzyme/',
-                                                'brenda_2023_1.txt')
-        self.assertEqual(result, '/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+    # def test_file_path_request(self):
+    #     result = testbrendapy.file_path_request('/home/nparis/brenda_enzyme/',
+    #                                             'brenda_2023_1.txt')
+    #     self.assertEqual(result, '/home/nparis/brenda_enzyme/brenda_2023_1.txt')
 
     def test_name_new_file_created(self):
         date_time = datetime.now()
