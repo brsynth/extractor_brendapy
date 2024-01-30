@@ -12,6 +12,7 @@ from datetime import datetime
 import os
 import json
 from tempfile import TemporaryDirectory
+from unittest.mock import MagicMock
 
 class TestDataBrenda(unittest.TestCase):
 
@@ -175,6 +176,38 @@ class TestDataBrenda(unittest.TestCase):
         d_test = testbrendapy.parameter_sorting(l2)
         for key in result :
             self.assertListEqual(sorted(d_test[key]), sorted(result[key]))
+
+    def test_check_parameter_values(self):
+        d_p_setting = {'p_str': ['test1'], 'p_list_dict': ['test2', 'test3']}
+        d1 = {'test1': '1', 'test2': 'v1', 'test3': 'v2'}
+        result = testbrendapy.check_parameter_values(d_p_setting, d1)
+        self.assertTrue(result)
+
+    def test2_check_parameter_values(self):
+        d_p_setting = {'p_str': ['test1'], 'p_list_dict': ['test2', 'test3']}
+        d2 = {'test1': '1', 'test2': 'v1'}
+        result = testbrendapy.check_parameter_values(d_p_setting, d2)
+        self.assertFalse(result)
+
+    # def setUp(self):
+    #     # Set up test data
+    #     self.list_ec = [123, 456]
+    #     self.d_p_setting = {'p_str': 'example_str', 'p_list_dict': ['param1', 'param2']}
+    #     self.protein_data = {'data': {'example_str': 'value', 'param1': 'value1', 'param2': 'value2'}}
+    #     self.mock_brenda_parser = MagicMock()
+    #     self.mock_brenda_parser.get_proteins.return_value = {1: {'data': self.protein_data}}
+    
+    # def test_data_brenda(self):
+    #     with unittest.mock.patch('your_module.BRENDA_PARSER', self.mock_brenda_parser):
+    #         results = testbrendapy.data_brenda(self.list_ec, self.d_p_setting)
+    #         expected_result = [{'example_str': 'value', 'param1': 'value1', 'param2': 'value2'}]
+    #         self.assertEqual(results, expected_result)
+    
+    # def test_data_brenda_no_match(self):
+    #     invalid_d_p_setting = {'p_str': 'invalid_str', 'p_list_dict': ['param3']}
+    #     with unittest.mock.patch('your_module.BRENDA_PARSER', self.mock_brenda_parser):
+    #         results = testbrendapy.data_brenda(self.list_ec, invalid_d_p_setting)
+    #         self.assertEqual(results, [])
 
 
 if __name__ == '__main__':
