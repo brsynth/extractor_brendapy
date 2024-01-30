@@ -11,11 +11,6 @@ import json
 from collections import defaultdict
 from datetime import datetime
 
-from brendapy import BrendaParser, BrendaProtein
-# from brendapy.console import console
-# from brendapy.log import get_logger
-# from brendapy.taxonomy import Taxonomy
-
 # =============================================================================
 
 # Pour cree une base de donnees qui servira comme jeux d'entrainement pour
@@ -40,42 +35,21 @@ from brendapy import BrendaParser, BrendaProtein
 #     """
 #     return str(path_brenda+file_name_txt)
 
-BRENDA_PARSER = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
 
-# class BrendaData:
-#     def __init__(self, file_path):
-#         self.bis = BrendaParser(file_path)
+# def list_all_ec_in_data(BRENDA_PARSER) -> list:
+#     """
+#     Gives all known EC in brenda
 
-#     def list_all_ec_in_data(self) -> list:
-#         """
-#         Gives all known EC in brenda
+#     Returns
+#     -------
+#     List
+#         list all EC number in Brenda.
 
-#         Returns
-#         -------
-#         List
-#             list all EC number in Brenda.
+#     """
+#     return BRENDA_PARSER.keys()
 
-#         """
-#         return self.parser.keys()
-
-#     def get_proteins_for_ec(self, ec_number):
-#         return self.bis.get_proteins(ec_number).values()
-
-
-def list_all_ec_in_data() -> list:
-    """
-    Gives all known EC in brenda
-
-    Returns
-    -------
-    List
-        list all EC number in Brenda.
-
-    """
-    return BRENDA_PARSER.keys()
-
-def get_proteins_for_ec(ec_number):
-    return BRENDA_PARSER.get_proteins(ec_number).values()
+# def get_proteins_for_ec(BRENDA_PARSER, ec_number):
+#     return BRENDA_PARSER.get_proteins(ec_number).values()
 
 
 def name_new_file_created() -> str:
@@ -305,21 +279,21 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     return d_result
 
 
-def check_parameter_values(d_p_setting, dict_proteins):
+def check_parameter_values(d_p_setting : dict, dict_proteins):
     """
     
 
     Parameters
     ----------
-    d_p_setting : TYPE
+    d_p_setting : dict
         DESCRIPTION.
-    dict_proteins : TYPE
-        DESCRIPTION.
+    dict_proteins : Orderdict
+        dict_proteins.data.
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    Bool
+        True or False.
 
     """
     get_params = [d_p_setting['p_str'], d_p_setting['p_list_dict']]
@@ -339,7 +313,7 @@ def check_parameter_values(d_p_setting, dict_proteins):
 #     return results
 
 
-def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
+def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]:
     """
     List containing a dictionary for each protein with the parameters
     selected
@@ -495,44 +469,3 @@ def parameter_sorting(list_parameter : list) -> dict:
                  'p_set' : commun_lists(list_parameter,
                                         all_parameter['p_set'])}
     return d_parameter_setting
-
-
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-
-BRENDA_PARSER = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
-
-
-# create_file_json(str(path_data_brenda+name_new_file_created('KM')),
-#                  data_brenda(list_all_ec_in_data(),'KM'))
-
-
-# list_p = ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value']
-# DataSetBrenda(list_p, '/home/nparis/brenda_enzyme/').run()
-
-# b = data_brenda(['1.1.1.103'], parameter_sorting(list_p))
-
-# for dict_proteins in BRENDA_PARSER.get_proteins('1.1.1.1').values():
-#     a = dict_proteins
-
-# d_parameter_setting = parameter_sorting(list_p)
-# brendaset = data_brenda(['1.1.1.10'], d_parameter_setting)
-# brendaset = data_brenda(list_all_ec_in_data(), d_parameter_setting)
-# create_file_json(str(path_data_brenda+name_new_file_created('KM')),
-#                  data_brenda(['1.1.1.1'], 'KM'))
-
-# print(BRENDA_PARSER.BRENDA_KEYS)
-
-
-# Affichage Brendapy
-# console.rule()
-# console.print(brendaset)
-# console.rule()
