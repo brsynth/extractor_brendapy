@@ -281,6 +281,27 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     return d_result
 
 
+def check_parameter_values(d_p_setting, dict_proteins):
+    """
+    
+
+    Parameters
+    ----------
+    d_p_setting : TYPE
+        DESCRIPTION.
+    dict_proteins : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    get_params = [d_p_setting['p_str'], d_p_setting['p_list_dict']]
+    return all(is_parameter_values(param, dict_proteins.data) for param in get_params)
+
+
 def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
     """
     List containing a dictionary for each protein with the parameters
@@ -319,10 +340,7 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
 
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
-            #Verifie la presence de vaeur pour les parametres demande
-            get_params = [d_p_setting['p_str'], d_p_setting['p_list_dict']]
-            if all(is_parameter_values(param, dict_proteins.data) for param in get_params):
-
+            if check_parameter_values(d_p_setting, dict_proteins):
                 d_index_subst = {}
                 for cine in d_p_setting['p_list_dict']:
                     #mettre toutes les parametre de cinetique ensemble pour les
