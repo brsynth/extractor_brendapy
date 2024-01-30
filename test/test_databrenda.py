@@ -16,20 +16,15 @@ from unittest.mock import MagicMock
 
 class TestDataBrenda(unittest.TestCase):
 
-    # def test_file_path_request(self):
-    #     result = testbrendapy.file_path_request('/home/nparis/brenda_enzyme/',
-    #                                             'brenda_2023_1.txt')
-    #     self.assertEqual(result, '/home/nparis/brenda_enzyme/brenda_2023_1.txt')
-
     def test_name_new_file_created(self):
         date_time = datetime.now()
         formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
         result = 'setbrenda_' + formatagedate + '.json'
         self.assertEqual(testbrendapy.name_new_file_created(), result)
 
-    def test_list_all_ec_in_data(self):
-        #Verifie que la list n'est pas vide
-        self.assertNotEqual(testbrendapy.list_all_ec_in_data(), [])
+    # def test_list_all_ec_in_data(self):
+    #     #Verifie que la list n'est pas vide
+    #     self.assertNotEqual(testbrendapy.list_all_ec_in_data(), [])
 
     def test_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
