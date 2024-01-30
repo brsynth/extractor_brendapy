@@ -40,6 +40,43 @@ from brendapy import BrendaParser, BrendaProtein
 #     """
 #     return str(path_brenda+file_name_txt)
 
+BRENDA_PARSER = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+
+# class BrendaData:
+#     def __init__(self, file_path):
+#         self.bis = BrendaParser(file_path)
+
+#     def list_all_ec_in_data(self) -> list:
+#         """
+#         Gives all known EC in brenda
+
+#         Returns
+#         -------
+#         List
+#             list all EC number in Brenda.
+
+#         """
+#         return self.parser.keys()
+
+#     def get_proteins_for_ec(self, ec_number):
+#         return self.bis.get_proteins(ec_number).values()
+
+
+def list_all_ec_in_data() -> list:
+    """
+    Gives all known EC in brenda
+
+    Returns
+    -------
+    List
+        list all EC number in Brenda.
+
+    """
+    return BRENDA_PARSER.keys()
+
+def get_proteins_for_ec(ec_number):
+    return BRENDA_PARSER.get_proteins(ec_number).values()
+
 
 def name_new_file_created() -> str:
     """
@@ -54,19 +91,6 @@ def name_new_file_created() -> str:
     date_time = datetime.now()
     formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
     return 'setbrenda_' + formatagedate + '.json'
-
-
-def list_all_ec_in_data() -> list:
-    """
-    Gives all known EC in brenda
-
-    Returns
-    -------
-    List
-        list all EC number in Brenda.
-
-    """
-    return BRENDA_PARSER.keys()
 
 
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
@@ -299,7 +323,20 @@ def check_parameter_values(d_p_setting, dict_proteins):
 
     """
     get_params = [d_p_setting['p_str'], d_p_setting['p_list_dict']]
-    return all(is_parameter_values(param, dict_proteins.data) for param in get_params)
+    return all(is_parameter_values(param, dict_proteins) for param in get_params)
+
+
+# def process_couple_kinetics(results, d_index_comment, l_index_comment, d_p_setting, protein_data):
+#     for couple in l_index_comment:
+#         d = {}
+#         for p_kine in d_p_setting['p_list_dict']:
+#             try:
+#                 index_comment = int(couple[p_kine])
+#                 d = create_subdict_json(d, d_p_setting, protein_data, index_comment, p_kine)
+#             except KeyError:
+#                 pass
+#     results.append(d)
+#     return results
 
 
 def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
@@ -335,19 +372,13 @@ def data_brenda(list_ec : list, d_p_setting : dict) -> list[dict]:
         #Ceux qui possede plusieurs valeurs -> list de dictionnaire
         #Ceux qui sont des parametre dans les dictionnaires : ex: substrate, comment, value
     """
-    #TODO : factoriser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     results = []
 
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
-            if check_parameter_values(d_p_setting, dict_proteins):
+            if check_parameter_values(d_p_setting, dict_proteins.data):
                 d_index_subst = {}
                 for cine in d_p_setting['p_list_dict']:
-                    #mettre toutes les parametre de cinetique ensemble pour les
-                    #reorganise par substrat
-                    #s'ils ont le meme substrat on mets les information km et
-                    #tn ensemble sinon on les mets dans des dictionnaire differents
-                    #pour eviter d'avoir des doublons
                     d_index_subst = find_shared_substrate(d_index_subst,
                                                           dict_proteins.data[cine],
                                                           cine)
