@@ -323,6 +323,35 @@ def find_shared_substrate_index(para_list_dict : list, protein_data) -> dict:
     return d_index_subst
 
 
+def pre_subdict_from_couple(d_p_setting : dict, protein_data, couple) -> dict:
+    """
+    
+
+    Parameters
+    ----------
+    d_p_setting : dict
+        DESCRIPTION.
+    protein_data : TYPE
+        DESCRIPTION.
+    couple : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    dict
+        DESCRIPTION.
+
+    """
+    d = {}
+    for p_kine in d_p_setting['p_list_dict']:
+        try:
+            index_comment = int(couple[p_kine])
+            d = create_subdict_json(d, d_p_setting, protein_data, index_comment, p_kine)
+        except KeyError:
+            pass
+    return d
+
+
 def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]:
     """
     List containing a dictionary for each protein with the parameters
@@ -381,16 +410,9 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
 
                     if d_index_comment:
                         for couple in l_index_comment:
-                            d = {}
-                            for p_kine in d_p_setting['p_list_dict']:
-                                try:
-                                    index_comment = int(couple[p_kine])
-                                    d = create_subdict_json(d, d_p_setting,
-                                                            dict_proteins.data,
-                                                            index_comment,
-                                                            p_kine)
-                                except KeyError:
-                                    pass
+                            d = pre_subdict_from_couple(d_p_setting,
+                                                        dict_proteins.data,
+                                                        couple)
                             results.append(d)
                     else:
                         results.append(d)
