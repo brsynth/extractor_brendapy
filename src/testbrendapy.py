@@ -300,17 +300,27 @@ def check_parameter_values(d_p_setting : dict, dict_proteins):
     return all(is_parameter_values(param, dict_proteins) for param in get_params)
 
 
-# def process_couple_kinetics(results, d_index_comment, l_index_comment, d_p_setting, protein_data):
-#     for couple in l_index_comment:
-#         d = {}
-#         for p_kine in d_p_setting['p_list_dict']:
-#             try:
-#                 index_comment = int(couple[p_kine])
-#                 d = create_subdict_json(d, d_p_setting, protein_data, index_comment, p_kine)
-#             except KeyError:
-#                 pass
-#     results.append(d)
-#     return results
+def find_shared_substrate_index(para_list_dict : list, protein_data) -> dict:
+    """
+    
+
+    Parameters
+    ----------
+    para_list_dict : list
+        liste des parametres.
+    protein_data : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    d_index_subst : dict
+        DESCRIPTION.
+
+    """
+    d_index_subst = {}
+    for cine in para_list_dict: #d_p_setting['p_list_dict']
+        d_index_subst = find_shared_substrate(d_index_subst, protein_data[cine], cine)
+    return d_index_subst
 
 
 def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]:
@@ -351,11 +361,8 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
             if check_parameter_values(d_p_setting, dict_proteins.data):
-                d_index_subst = {}
-                for cine in d_p_setting['p_list_dict']:
-                    d_index_subst = find_shared_substrate(d_index_subst,
-                                                          dict_proteins.data[cine],
-                                                          cine)
+                d_index_subst = find_shared_substrate_index(d_p_setting['p_list_dict'],
+                                                            dict_proteins.data)
 
                 for substr, d_i_substr in d_index_subst.items():
                     d={}
