@@ -184,6 +184,28 @@ class TestDataBrenda(unittest.TestCase):
         result = testbrendapy.check_parameter_values(d_p_setting, d2)
         self.assertFalse(result)
 
+    def test_find_shared_substrate_index(self):
+        para_list_dict = ['test1']
+        protein_data = {'test1': {'k1': 1, 'k2': 2}}
+        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
+        self.assertEqual(result,  {})
+
+    def test2_find_shared_substrate_index(self):
+        para_list_dict = ['test1', 'test2']
+        protein_data = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4}}
+        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
+        print(result)
+        #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2'}})
+
+    def test3_find_shared_substrate_index(self):
+        para_list_dict = ['test1', 'test2', 'test3']
+        protein_data = {'test1': {'k1': 1, 'k2': 2},
+                        'test2': {'k2': 3, 'k3': 4},
+                        'test3' : {'k1': 5, 'k2': 6}}
+        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
+        print(result)
+        #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2', 'k3'}, 'protein3': {'sub1', 'sub2'}})
+
     # def setUp(self):
     #     # Set up test data
     #     self.list_ec = [123, 456]
