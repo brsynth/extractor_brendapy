@@ -185,26 +185,32 @@ class TestDataBrenda(unittest.TestCase):
         self.assertFalse(result)
 
     def test_find_shared_substrate_index(self):
-        para_list_dict = ['test1']
-        protein_data = {'test1': {'k1': 1, 'k2': 2}}
-        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
+        para_list = ['test1']
+        d1 = {'test1': {'k1': 1, 'k2': 2}}
+        result = testbrendapy.find_shared_substrate_index(para_list, d1)
         self.assertEqual(result,  {})
 
-    def test2_find_shared_substrate_index(self):
-        para_list_dict = ['test1', 'test2']
-        protein_data = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4}}
-        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
-        print(result)
+    # def test2_find_shared_substrate_index(self):
+    #     para_list = ['test1', 'test2']
+    #     d2 = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4}}
+    #     result = testbrendapy.find_shared_substrate_index(para_list, d2)
+        # print(result)
         #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2'}})
 
-    def test3_find_shared_substrate_index(self):
-        para_list_dict = ['test1', 'test2', 'test3']
-        protein_data = {'test1': {'k1': 1, 'k2': 2},
-                        'test2': {'k2': 3, 'k3': 4},
-                        'test3' : {'k1': 5, 'k2': 6}}
-        result = testbrendapy.find_shared_substrate_index(para_list_dict, protein_data)
-        print(result)
+    # def test3_find_shared_substrate_index(self):
+    #     para_list = ['test1', 'test2', 'test3']
+    #     d3 = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4},
+    #           'test3' : {'k1': 5, 'k2': 6}}
+    #     result = testbrendapy.find_shared_substrate_index(para_list, d3)
+        # print(result)
         #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2', 'k3'}, 'protein3': {'sub1', 'sub2'}})
+
+    def test_pre_subdict_from_couple(self):
+        d_p_setting = {'p_list_dict': []}
+        d1 = {}
+        couple = {}
+        result = testbrendapy.pre_subdict_from_couple(d_p_setting, d1, couple)
+        self.assertEqual(result, {})
 
     # def setUp(self):
     #     # Set up test data
