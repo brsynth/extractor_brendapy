@@ -28,42 +28,42 @@ class TestDataBrenda(unittest.TestCase):
 
     def test_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
-                                 ('test3', 'Homo sapiens'), ('test4', None),
-                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
-                                 ('test6', set())])
+                                  ('test3', 'Homo sapiens'), ('test4', None),
+                                  ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                  ('test6', set())])
         list_test = ['test1','test2', 'test3', 'test5']
         self.assertTrue(testbrendapy.is_parameter_values(list_test, dict_test))
 
     def test2_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
-                                 ('test3', 'Homo sapiens'), ('test4', None),
-                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
-                                 ('test6', set())])
+                                  ('test3', 'Homo sapiens'), ('test4', None),
+                                  ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                  ('test6', set())])
         list_test = ['test2', 'test4']
         self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
 
     def test3_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
-                                 ('test3', 'Homo sapiens'), ('test4', None),
-                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
-                                 ('test6', set())])
+                                  ('test3', 'Homo sapiens'), ('test4', None),
+                                  ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                  ('test6', set())])
         list_test = ['test1','test5', 'test6']
         self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
 
     def test4_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
-                                 ('test3', 'Homo sapiens'), ('test4', None),
-                                 ('test5', {1: {'t1': 'b1', 't2': 123}}),
-                                 ('test6', set())])
+                                  ('test3', 'Homo sapiens'), ('test4', None),
+                                  ('test5', {1: {'t1': 'b1', 't2': 123}}),
+                                  ('test6', set())])
         list_test = ['test1','test5', 'test7']
         self.assertFalse(testbrendapy.is_parameter_values(list_test, dict_test))
 
     def test_find_shared_substrate(self):
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
-                   'value': 46.7, 'substrate': 'L-threonine'},
+                    'value': 46.7, 'substrate': 'L-threonine'},
                   {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
-                   'value': 47.3, 'substrate': 'L-threonine'}]
+                    'value': 47.3, 'substrate': 'L-threonine'}]
         d_result = {'L-threonine': {'TN': [0, 1]}}
         self.assertDictEqual(testbrendapy.find_shared_substrate({}, d_test, parameter), d_result)
 
@@ -71,49 +71,49 @@ class TestDataBrenda(unittest.TestCase):
         d_temporaire = {'L-threonine': {'KM': [0]}}
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
-                   'value': 46.7, 'substrate': 'L-threonine'},
+                    'value': 46.7, 'substrate': 'L-threonine'},
                   {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
-                   'value': 47.3, 'substrate': 'L-threonine'}]
+                    'value': 47.3, 'substrate': 'L-threonine'}]
         d_result = {'L-threonine': {'KM': [0], 'TN': [0, 1]}}
         self.assertDictEqual(testbrendapy.find_shared_substrate(d_temporaire, d_test,
                                                                 parameter), d_result)
 
     def test_d_comment_each_kinetic(self):
-       d_index = {}
-       d_i_substr = {'TN': [16], 'KM': [20, 21]}
-       dict_proteins = {'TN': {16: {'comment': 'pH 7.0, 25°C, mutant N107D <17>'}},
+        d_index = {}
+        d_i_substr = {'TN': [16], 'KM': [20, 21]}
+        dict_proteins = {'TN': {16: {'comment': 'pH 7.0, 25°C, mutant N107D <17>'}},
                         'KM': {20: {'comment': 'pH 7.0, 25°C, mutant N107D <17>'},
-                               21: {'comment': 'pH 7.0, 25°C, mutant N107L <17>'}}}
-       result = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
-                 'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
+                                21: {'comment': 'pH 7.0, 25°C, mutant N107L <17>'}}}
+        result = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
+                  'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
                         '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
-       self.assertEqual(testbrendapy.d_comment_each_kinetic(d_index, d_i_substr,
+        self.assertEqual(testbrendapy.d_comment_each_kinetic(d_index, d_i_substr,
                                                             dict_proteins), result)
 
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
                   'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
-                         '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
+                          '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
         result = [{'TN': '16', 'KM': '20'}]
         self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
 
     def test2_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'mutant N107D'},
                   'KM': {'20': 'mutant N107D',
-                         '21': 'mutant N107L'},
+                          '21': 'mutant N107L'},
                   'KKM': {'2': 'mutant N107D',
-                         '1': 'mutant N107L'}}
+                          '1': 'mutant N107L'}}
         result = [{'TN': '16', 'KM': '20', 'KKM': '2'}, {'KM': '21', 'KKM': '1'}]
         self.assertEqual(testbrendapy.find_keys_with_similar_values(d_test), result)
 
     def test_create_subdict_json(self):
         d_temporaire = {}
         d_p_setting = {'p_str': ['param1', 'param2'],
-                       'key_p_list_dict': ['key1', 'key2']}
+                        'key_p_list_dict': ['key1', 'key2']}
         dict_proteins = {'param1': 'value1',
-                         'param2': 'value2',
-                         'kinetic_value': {'sub_d_brenda_value':
-                                           {'key1': 'result1',
+                          'param2': 'value2',
+                          'kinetic_value': {'sub_d_brenda_value':
+                                            {'key1': 'result1',
                                             'key2': 'result2'}}}
         p_kinetic = 'kinetic_value'
         i_sub_d_brenda = 'sub_d_brenda_value'
@@ -132,8 +132,8 @@ class TestDataBrenda(unittest.TestCase):
             json_path = os.path.join(temp_dir, "test.json")
 
             test_data = [{"1.1.1.1": "ec", "substrat": "name1"},
-                         {"2.2.2.2": "ec", "substrat": "name2"},
-                         {"3.3.3.3": "ec", "substrat": "name3"}]
+                          {"2.2.2.2": "ec", "substrat": "name2"},
+                          {"3.3.3.3": "ec", "substrat": "name3"}]
 
             testbrendapy.create_file_json(json_path, test_data)
             self.assertTrue(os.path.exists(json_path))
@@ -211,6 +211,19 @@ class TestDataBrenda(unittest.TestCase):
         couple = {}
         result = testbrendapy.pre_subdict_from_couple(d_p_setting, d1, couple)
         self.assertEqual(result, {})
+
+    # def test2_pre_subdict_from_couple(self):
+    #     d_p_setting = {'p_str': ['param1', 'param2'],
+    #                    'p_list_dict': ['test1', 'test2']}
+    #     dict_proteins = {'param1': 'value1',
+    #                       'param2': 'value2',
+    #                       'test1': {'k1': '1', 'k2': '2'},
+    #                       'test2': {'k1': '1', 'k2': '2'}}
+    #     # d_p_setting = {'p_str': ['test'], 'p_list_dict': ['test1', 'test2']}
+    #     couple = {'test1': '1'}
+    #     result = testbrendapy.pre_subdict_from_couple(d_p_setting, dict_proteins, couple)
+    #     print(result)
+    #     self.assertEqual(result, {'test1': {'k1': 1, 'k2': 2}})
 
     # def setUp(self):
     #     # Set up test data
