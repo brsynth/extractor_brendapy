@@ -212,18 +212,28 @@ class TestDataBrenda(unittest.TestCase):
         result = testbrendapy.pre_subdict_from_couple(d_p_setting, d1, couple)
         self.assertEqual(result, {})
 
-    # def test2_pre_subdict_from_couple(self):
-    #     d_p_setting = {'p_str': ['param1', 'param2'],
-    #                    'p_list_dict': ['test1', 'test2']}
-    #     dict_proteins = {'param1': 'value1',
-    #                       'param2': 'value2',
-    #                       'test1': {'k1': '1', 'k2': '2'},
-    #                       'test2': {'k1': '1', 'k2': '2'}}
-    #     # d_p_setting = {'p_str': ['test'], 'p_list_dict': ['test1', 'test2']}
-    #     couple = {'test1': '1'}
-    #     result = testbrendapy.pre_subdict_from_couple(d_p_setting, dict_proteins, couple)
-    #     print(result)
-    #     self.assertEqual(result, {'test1': {'k1': 1, 'k2': 2}})
+    def test2_pre_subdict_from_couple(self):
+        d_p_setting = {'p_str': ['param1'],
+                        'p_list_dict': ['test1', 'test2'],
+                        'key_p_list_dict' : ['key1']}
+        dict_proteins = {'param1': 'value1',
+                         'test1': [{'key1': '1', 'k2': '2'}, {'key2': '1', 'k2': '2'}],
+                         'test2': [{'key3': '1', 'k2': '2'}, {'key1': '1', 'k2': '2'}]}
+        couple = {'test1': 0}
+        result = testbrendapy.pre_subdict_from_couple(d_p_setting, dict_proteins, couple)
+        self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1'})
+
+    def test3_pre_subdict_from_couple(self):
+        d_p_setting = {'p_str': ['param1'],
+                        'p_list_dict': ['test1', 'test2'],
+                        'key_p_list_dict' : ['key1']}
+        dict_proteins = {'param1': 'value1',
+                         'test1': [{'key1': '1', 'k2': '2'}, {'key2': '1', 'k2': '2'}],
+                         'test2': [{'key3': '1', 'k2': '2'}, {'key1': '1', 'k2': '2'}]}
+        couple = {'test1': 0, 'test2': 1}
+        result = testbrendapy.pre_subdict_from_couple(d_p_setting, dict_proteins, couple)
+        self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '1'})
+
 
     # def setUp(self):
     #     # Set up test data
