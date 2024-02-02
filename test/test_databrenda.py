@@ -190,12 +190,12 @@ class TestDataBrenda(unittest.TestCase):
         result = testbrendapy.find_shared_substrate_index(para_list, d1)
         self.assertEqual(result,  {})
 
-    # def test2_find_shared_substrate_index(self):
-    #     para_list = ['test1', 'test2']
-    #     d2 = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4}}
-    #     result = testbrendapy.find_shared_substrate_index(para_list, d2)
-        # print(result)
-        #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2'}})
+    def test2_find_shared_substrate_index(self):
+        para_list = ['test1', 'test2']
+        d2 = {'test1': [{'substrate': 1}, {'k2': 2}],
+              'test2': [{'k2': 3}, {'substrate': 4}]}
+        result = testbrendapy.find_shared_substrate_index(para_list, d2)
+        self.assertEqual(result, {'1': {'test1': [0]}, '4': {'test2': [1]}})
 
     # def test3_find_shared_substrate_index(self):
     #     para_list = ['test1', 'test2', 'test3']
@@ -229,10 +229,11 @@ class TestDataBrenda(unittest.TestCase):
                         'key_p_list_dict' : ['key1']}
         dict_proteins = {'param1': 'value1',
                          'test1': [{'key1': '1', 'k2': '2'}, {'key2': '1', 'k2': '2'}],
-                         'test2': [{'key3': '1', 'k2': '2'}, {'key1': '1', 'k2': '2'}]}
+                         'test2': [{'key3': '1', 'k2': '2'}, {'key1': '4', 'k2': '2'}]}
         couple = {'test1': 0, 'test2': 1}
         result = testbrendapy.pre_subdict_from_couple(d_p_setting, dict_proteins, couple)
-        self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '1'})
+        # 'test2_key1': '1'
+        self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '4'})
 
 
     # def setUp(self):
