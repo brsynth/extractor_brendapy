@@ -197,13 +197,13 @@ class TestDataBrenda(unittest.TestCase):
         result = testbrendapy.find_shared_substrate_index(para_list, d2)
         self.assertEqual(result, {'1': {'test1': [0]}, '4': {'test2': [1]}})
 
-    # def test3_find_shared_substrate_index(self):
-    #     para_list = ['test1', 'test2', 'test3']
-    #     d3 = {'test1': {'k1': 1, 'k2': 2}, 'test2': {'k2': 3, 'k3': 4},
-    #           'test3' : {'k1': 5, 'k2': 6}}
-    #     result = testbrendapy.find_shared_substrate_index(para_list, d3)
-        # print(result)
-        #self.assertEqual(result, {'test1': {'k2'}, 'test2': {'k2', 'k3'}, 'protein3': {'sub1', 'sub2'}})
+    def test3_find_shared_substrate_index(self):
+        para_list = ['test1', 'test2', 'test3']
+        d3 = {'test1': [{'substrate': 1}, {'k2': 2}],
+              'test2': [{'k2': 3}, {'substrate': 4}],
+              'test3' : [{'k3': 3}, {'k1': 5}, {'k2': 6}, {'substrate': 4}]}
+        result = testbrendapy.find_shared_substrate_index(para_list, d3)
+        self.assertEqual(result, {'1': {'test1': [0]}, '4': {'test2': [1], 'test3': [3]}})
 
     def test_pre_subdict_from_couple(self):
         d_p_setting = {'p_list_dict': []}
