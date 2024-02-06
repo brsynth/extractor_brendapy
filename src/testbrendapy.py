@@ -186,8 +186,8 @@ def find_keys_with_similar_values(main_dict: dict) -> list[dict]:
 
     # Recup les clés ayant des valeurs communes
     keys_with_common_comment = {k: v for k, v in inverse_dict.items() if len(v) > 1}
-    for value, keys in keys_with_common_comment.items():
-        l_keys.append(dict(keys))
+    for v in keys_with_common_comment.values():
+        l_keys.append(dict(v))
     return l_keys
 
 
@@ -301,21 +301,27 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
 
 def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict, couple : dict) -> dict:
     """
-    
+    cree le sousdictionnaire pour les parametre ayant plusieurs valeurs lie par
+    le meme commentaire.
+    creates subdictionary for parameters with multiple values linked by the 
+    same comment
 
     Parameters
     ----------
     d_p_setting : dict
-        DESCRIPTION.
+        Dictionary of configuration parameters.
     protein_data : TYPE
-        DESCRIPTION.
+        brenda protein data.
     couple : dict
-        DESCRIPTION.
+        comment with index.
 
     Returns
     -------
     dict
-        DESCRIPTION.
+        dictionnaire au format json pour les commentaires identitques des 
+        parametres qui possedent plusieurs valeurs.
+        dictionary in json format for identical comments on parameters with 
+        multiple values.
 
     """
     d = {}
@@ -351,8 +357,6 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
     List[Dict]
         Parameter dictionary list for each proteins.
 
-    """
-    """
     #Dans un premier temps on va mettre dans le dictionnaire les parametres
     #ou nous y avons acces directement
     
@@ -369,7 +373,7 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
                 d_index_subst = find_shared_substrate_index(d_p_setting['p_list_dict'],
                                                             dict_proteins.data)
 
-                for substr, d_i_substr in d_index_subst.items():
+                for d_i_substr in d_index_subst.values():
                     d={}
                     d_index_comment = {}
                     for p_k, l_i_subst in d_i_substr.items():
