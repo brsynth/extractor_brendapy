@@ -300,21 +300,32 @@ def check_parameter_values(d_p_setting : dict, dict_proteins):
     return all(is_parameter_values(param, dict_proteins) for param in get_params)
 
 
-def find_shared_substrate_index(para_list_dict : list, protein_data) -> dict:
+def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> dict:
     """
-    
+    Lance la fonction find shared substrate pour tous les parametre souhaite
+    qui sont dans la liste d_p_setting['p_list_dict'].
+
+    Calls the find shared substrate function for all desired parameters
+    in the d_p_setting['p_list_dict'] list.
 
     Parameters
     ----------
     para_list_dict : list
-        liste des parametres.
-    protein_data : TYPE
-        DESCRIPTION.
+        list of parametres /d_p_setting['p_list_dict']
+    protein_data : dict
+        brenda protein data
 
     Returns
     -------
     d_index_subst : dict
-        DESCRIPTION.
+        Dictionnaire pour chaque parametre souhaite, qui contient lui meme un 
+        dictionnaire ayant en clef les substrat et en valeur un dictionnaire
+        pour chaque parametre souhaite avec la liste des index dans la base de
+        donne de brenda pour ce substrat.
+        Dictionary for each desired parameter, which itself contains a 
+        dictionary with substrates as key and a dictionary value for each 
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
 
     """
     d_index_subst = {}
@@ -323,7 +334,7 @@ def find_shared_substrate_index(para_list_dict : list, protein_data) -> dict:
     return d_index_subst
 
 
-def pre_subdict_from_couple(d_p_setting : dict, protein_data, couple) -> dict:
+def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict, couple : dict) -> dict:
     """
     
 
@@ -333,7 +344,7 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data, couple) -> dict:
         DESCRIPTION.
     protein_data : TYPE
         DESCRIPTION.
-    couple : TYPE
+    couple : dict
         DESCRIPTION.
 
     Returns
@@ -350,6 +361,46 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data, couple) -> dict:
         except KeyError:
             pass
     return d
+
+
+# def create_subdict_from_index(d_p_setting, protein_data, d_i_substr):
+#     """
+    
+
+#     Parameters
+#     ----------
+#     d_p_setting : TYPE
+#         DESCRIPTION.
+#     protein_data : TYPE
+#         DESCRIPTION.
+#     d_i_substr : TYPE
+#         DESCRIPTION.
+
+#     Returns
+#     -------
+#     results : TYPE
+#         DESCRIPTION.
+
+#     """
+#     results = []
+#     d_index_comment = {}
+
+#     for p_k, l_i_subst in d_i_substr.items():
+#         if len(l_i_subst) == 1:
+#             d = create_subdict_json({}, d_p_setting, protein_data, l_i_subst[0], p_k)
+#             results.append(d)
+#         elif len(l_i_subst) > 1:
+#             d_index_comment = d_comment_each_kinetic(d_index_comment, d_i_substr, protein_data)
+#             l_index_comment = find_keys_with_similar_values(d_index_comment)
+
+#     if d_index_comment:
+#         for couple in l_index_comment:
+#             d = pre_subdict_from_couple(d_p_setting, protein_data, couple)
+#             results.append(d)
+#     # else:
+#     #     results.append(d)
+
+#     return results
 
 
 def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]:
@@ -397,6 +448,8 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
                     d={}
                     d_index_comment = {}
                     for p_k, l_i_subst in d_i_substr.items():
+                        # d = create_subdict_from_index(d_p_setting, dict_proteins.data, d_i_substr)
+                        # results.append(d)
                         if len(l_i_subst) == 1:
                             d = create_subdict_json(d, d_p_setting,
                                                     dict_proteins.data,
@@ -404,8 +457,8 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
 
                         if len(l_i_subst) > 1:
                             d_index_comment = d_comment_each_kinetic(d_index_comment,
-                                                                     d_i_substr,
-                                                                     dict_proteins.data)
+                                                                      d_i_substr,
+                                                                      dict_proteins.data)
                             l_index_comment = find_keys_with_similar_values(d_index_comment)
 
                     if d_index_comment:
