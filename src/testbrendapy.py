@@ -252,7 +252,7 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     d_result : dict
         Dictionnaire des resultats des données extraites de brenda
     d_p_setting : dict
-        Dictionnaire de paramètres de configuration.
+        Dictionary of configuration parameters.
     dict_proteins : OrderedDict
         Base de donnes de Brenda sous forme de dictionnaire.
     i_sub_d_brenda : TYPE
@@ -281,12 +281,14 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
 
 def check_parameter_values(d_p_setting : dict, dict_proteins):
     """
-    
+    Verifie la presence de valeurs dans la base de donnees pour les parametres
+    souhaite.
+    Checks the presence of values in the database for parameters wishes
 
     Parameters
     ----------
     d_p_setting : dict
-        DESCRIPTION.
+        Dictionary of configuration parameters.
     dict_proteins : Orderdict
         dict_proteins.data.
 
