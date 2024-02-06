@@ -18,40 +18,6 @@ from datetime import datetime
 
 # =============================================================================
 
-# def file_path_request(path_brenda : str, file_name_txt : str) -> str:
-#     """
-#     Provides the path to the file containing all brenda data in txt format
-
-#     Parameters
-#     ----------
-#     path_brenda : str
-#         chemin jusqu'au dossier ou est situer le fichier txt.
-
-#     Returns
-#     -------
-#     str
-#         chemin avec le noms du fichier txt inclus.
-
-#     """
-#     return str(path_brenda+file_name_txt)
-
-
-# def list_all_ec_in_data(BRENDA_PARSER) -> list:
-#     """
-#     Gives all known EC in brenda
-
-#     Returns
-#     -------
-#     List
-#         list all EC number in Brenda.
-
-#     """
-#     return BRENDA_PARSER.keys()
-
-# def get_proteins_for_ec(BRENDA_PARSER, ec_number):
-#     return BRENDA_PARSER.get_proteins(ec_number).values()
-
-
 def name_new_file_created() -> str:
     """
     Gives the name of the file heure et date
@@ -164,9 +130,6 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
              'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
                     '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
     """
-    # print('d_index :', d_index)
-    # print('d_i_substr :', d_i_substr)
-    # print('dict_proteins :', dict_proteins)
     for kinetic, l_index in d_i_substr.items():
         for index in l_index:
             try:
@@ -365,46 +328,6 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict, couple : di
     return d
 
 
-# def create_subdict_from_index(d_p_setting, protein_data, d_i_substr):
-#     """
-    
-
-#     Parameters
-#     ----------
-#     d_p_setting : TYPE
-#         DESCRIPTION.
-#     protein_data : TYPE
-#         DESCRIPTION.
-#     d_i_substr : TYPE
-#         DESCRIPTION.
-
-#     Returns
-#     -------
-#     results : TYPE
-#         DESCRIPTION.
-
-#     """
-#     results = []
-#     d_index_comment = {}
-
-#     for p_k, l_i_subst in d_i_substr.items():
-#         if len(l_i_subst) == 1:
-#             d = create_subdict_json({}, d_p_setting, protein_data, l_i_subst[0], p_k)
-#             results.append(d)
-#         elif len(l_i_subst) > 1:
-#             d_index_comment = d_comment_each_kinetic(d_index_comment, d_i_substr, protein_data)
-#             l_index_comment = find_keys_with_similar_values(d_index_comment)
-
-#     if d_index_comment:
-#         for couple in l_index_comment:
-#             d = pre_subdict_from_couple(d_p_setting, protein_data, couple)
-#             results.append(d)
-#     # else:
-#     #     results.append(d)
-
-#     return results
-
-
 def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]:
     """
     List containing a dictionary for each protein with the parameters
@@ -450,8 +373,6 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
                     d={}
                     d_index_comment = {}
                     for p_k, l_i_subst in d_i_substr.items():
-                        # d = create_subdict_from_index(d_p_setting, dict_proteins.data, d_i_substr)
-                        # results.append(d)
                         if len(l_i_subst) == 1:
                             d = create_subdict_json(d, d_p_setting,
                                                     dict_proteins.data,
