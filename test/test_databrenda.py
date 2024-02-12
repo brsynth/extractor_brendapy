@@ -22,10 +22,6 @@ class TestDataBrenda(unittest.TestCase):
         result = 'setbrenda_' + formatagedate + '.json'
         self.assertEqual(testbrendapy.name_new_file_created(), result)
 
-    # def test_list_all_ec_in_data(self):
-    #     #Verifie que la list n'est pas vide
-    #     self.assertNotEqual(testbrendapy.list_all_ec_in_data(), [])
-
     def test_is_parameter_values(self):
         dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
                                   ('test3', 'Homo sapiens'), ('test4', None),
@@ -235,26 +231,24 @@ class TestDataBrenda(unittest.TestCase):
         # 'test2_key1': '1'
         self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '4'})
 
+    def setUp(self):
+        # Set up test data
+        self.list_ec = ['1.1.1.1']
+        self.d_p_setting = {'p_str': ['param1', 'param2'],
+                            'p_list_dict': ['test1', 'test2'],
+                            'key_p_list_dict' : ['key1']}
+        self.dict_proteins = {'param1': 'value1', 'param2': 'value2',
+                              'test1': [{'key1': '1', 'substrate': '2'},
+                                        {'key1': '1', 'substrate': '2'}],
+                              'test2': [{'substrate': '1', 'key1': '2'},
+                                        {'key1': '4', 'substrate': '2'}]}
+        self.mock_brenda_parser = MagicMock()
+        self.mock_brenda_parser.get_proteins.return_value = {'1': self.dict_proteins}
+        # self.dict_proteins.data.return_value = {'data' : self.dict_proteins}
 
-    # def setUp(self):
-    #     # Set up test data
-    #     self.list_ec = [123, 456]
-    #     self.d_p_setting = {'p_str': 'example_str', 'p_list_dict': ['param1', 'param2']}
-    #     self.protein_data = {'data': {'example_str': 'value', 'param1': 'value1', 'param2': 'value2'}}
-    #     self.mock_brenda_parser = MagicMock()
-    #     self.mock_brenda_parser.get_proteins.return_value = {1: {'data': self.protein_data}}
-    
-    # def test_data_brenda(self):
-    #     with unittest.mock.patch('your_module.BRENDA_PARSER', self.mock_brenda_parser):
-    #         results = testbrendapy.data_brenda(self.list_ec, self.d_p_setting)
-    #         expected_result = [{'example_str': 'value', 'param1': 'value1', 'param2': 'value2'}]
-    #         self.assertEqual(results, expected_result)
-    
-    # def test_data_brenda_no_match(self):
-    #     invalid_d_p_setting = {'p_str': 'invalid_str', 'p_list_dict': ['param3']}
-    #     with unittest.mock.patch('your_module.BRENDA_PARSER', self.mock_brenda_parser):
-    #         results = testbrendapy.data_brenda(self.list_ec, invalid_d_p_setting)
-    #         self.assertEqual(results, [])
+    def test_data_brenda(self):
+        results = testbrendapy.data_brenda(self.mock_brenda_parser, self.list_ec, self.d_p_setting)
+        print(results)
 
 
 if __name__ == '__main__':

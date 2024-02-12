@@ -5,7 +5,6 @@ Created on Thu Oct  5 13:53:41 2023
 
 @author: nparis
 """
-# from typing import Dict, List
 import json
 
 from collections import defaultdict
@@ -295,11 +294,13 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
     """
     d_index_subst = {}
     for cine in para_list_dict: #d_p_setting['p_list_dict']
-        d_index_subst = find_shared_substrate(d_index_subst, protein_data[cine], cine)
+        d_index_subst = find_shared_substrate(d_index_subst,
+                                              protein_data[cine], cine)
     return d_index_subst
 
 
-def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict, couple : dict) -> dict:
+def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict,
+                            couple : dict) -> dict:
     """
     cree le sousdictionnaire pour les parametre ayant plusieurs valeurs lie par
     le meme commentaire.
@@ -328,7 +329,8 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict, couple : di
     for p_kine in d_p_setting['p_list_dict']:
         try:
             index_comment = int(couple[p_kine])
-            d = create_subdict_json(d, d_p_setting, protein_data, index_comment, p_kine)
+            d = create_subdict_json(d, d_p_setting, protein_data,
+                                    index_comment, p_kine)
         except KeyError:
             pass
     return d
