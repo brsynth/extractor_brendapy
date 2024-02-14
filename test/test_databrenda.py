@@ -16,6 +16,45 @@ from unittest.mock import MagicMock
 
 class TestDataBrenda(unittest.TestCase):
 
+    def setUp(self):
+        self.dict_proteins = OrderedDict([('protein_id', 1),
+                                          ('ec', '1.1.1.1'),
+                                          ('organism', 'Gallus gallus'),
+                                          ('taxonomy', 9031),
+                                          ('uniprot', None),
+                                          ('KM',
+                                           [{'data': '0.98 {NAD+}',
+                                             'refs': [17],
+                                             'substrate': 'NAD+',
+                                             'units': 'mM',
+                                             'value': 0.98},
+                                            {'chebi': 'CHEBI:16857',
+                                             'data': '5.38 {L-threonine}',
+                                             'refs': [1],
+                                             'substrate': 'L-threonine',
+                                             'units': 'mM',
+                                             'value': 5.38},
+                                            {'chebi': 'CHEBI:16857',
+                                             'data': '8.4 {L-threonine}',
+                                             'refs': [17],
+                                             'substrate': 'L-threonine',
+                                             'units': 'mM',
+                                             'value': 8.4},
+                                            {'data': '0.19 {NAD+}',
+                                             'refs': [1, 16, 18],
+                                             'substrate': 'NAD+',
+                                             'units': 'mM',
+                                             'value': 0.19}]),
+                                          ('RN', {'alcohol dehydrogenase'}),
+                                          ('RT', {'reduction', 'oxidation', 'redox reaction'}),
+                                          ('SA', [{'comment': '2 isozmyes with various '
+                                                   'substrates, overview <113>;',
+                                                   'data': '-999.0',
+                                                   'refs': [35, 125],
+                                                   'units': 'µmol/min/mg'}]),
+                                          ('SN', {'alcohol:NAD+ oxidoreductase'}),
+                                          ('tissues', {'BTO:0000759'})])
+
     def test_name_new_file_created(self):
         date_time = datetime.now()
         formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
@@ -67,7 +106,7 @@ class TestDataBrenda(unittest.TestCase):
         d_temporaire = {'L-threonine': {'KM': [0]}}
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
-                    'value': 46.7, 'substrate': 'L-threonine'},
+                   'value': 46.7, 'substrate': 'L-threonine'},
                   {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
                     'value': 47.3, 'substrate': 'L-threonine'}]
         d_result = {'L-threonine': {'KM': [0], 'TN': [0, 1]}}
@@ -85,6 +124,15 @@ class TestDataBrenda(unittest.TestCase):
                         '21': 'pH 7.0, 25°C, mutant N107L <17>'}}
         self.assertEqual(testbrendapy.d_comment_each_kinetic(d_index, d_i_substr,
                                                             dict_proteins), result)
+
+    def test2_d_comment_each_kinetic(self):
+        d_index = {}
+        d_i_substr = {'TN': [16], 'KM': [20, 21]}
+        dict_proteins = {'TN': {16: {'comment': '-'}},
+                        'KM': {20: {'comment': '-'},
+                                21: {'comment': 'pH 7.0, 25°C, mutant N107L <17>'}}}
+        self.assertRaises(KeyError, testbrendapy.d_comment_each_kinetic, d_index,
+                          d_i_substr,dict_proteins)
 
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
@@ -121,6 +169,20 @@ class TestDataBrenda(unittest.TestCase):
                   'kinetic_value_key1': 'result1','kinetic_value_key2': 'result2'}
 
         self.assertEqual(test, result)
+
+    def test2_create_subdict_json(self):
+        d_temporaire = {}
+        d_p_setting = {'p_str': ['param1'], 'key_p_list_dict': ['key1']}
+        dict_proteins = {'param1': 'value1'}
+        i_sub_d_brenda = 'kinetic_value'
+        p_kinetic = 'sub_d_brenda_value'
+        
+        result = {'param1': 'value1'}
+
+        self.assertEqual(testbrendapy.create_subdict_json(d_temporaire, d_p_setting,
+                                             dict_proteins, i_sub_d_brenda,
+                                             p_kinetic), result)
+
 
     def test_create_file_json(self):
         with TemporaryDirectory() as temp_dir:
@@ -231,24 +293,31 @@ class TestDataBrenda(unittest.TestCase):
         # 'test2_key1': '1'
         self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '4'})
 
-    def setUp(self):
-        # Set up test data
-        self.list_ec = ['1.1.1.1']
-        self.d_p_setting = {'p_str': ['param1', 'param2'],
-                            'p_list_dict': ['test1', 'test2'],
-                            'key_p_list_dict' : ['key1']}
-        self.dict_proteins = {'param1': 'value1', 'param2': 'value2',
-                              'test1': [{'key1': '1', 'substrate': '2'},
-                                        {'key1': '1', 'substrate': '2'}],
-                              'test2': [{'substrate': '1', 'key1': '2'},
-                                        {'key1': '4', 'substrate': '2'}]}
-        self.mock_brenda_parser = MagicMock()
-        self.mock_brenda_parser.get_proteins.return_value = {'1': self.dict_proteins}
+    # def test4(self):
+    #     dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
+    #                               ('test3', 'Homo sapiens'), ('test4', None),
+    #                               ('test5', {1: {'t1': 'b1', 't2': 123}}),
+    #                               ('test6', set())])
+    #     list_ec = ['1.1.1.103']
+    #     d_p_setting = {'p_str': ['param1', 'param2'],
+    #                         'p_list_dict': ['test1', 'test2'],
+    #                         'key_p_list_dict' : ['key1']}
+    #     dict_protein = {'param1': 'value1', 'param2': 'value2',
+    #                           'test1': [{'key1': '1', 'substrate': '2'},
+    #                                     {'key1': '1', 'substrate': '2'}],
+    #                           'test2': [{'substrate': '1', 'key1': '2'},
+    #                                     {'key1': '4', 'substrate': '2'}]}
+    #     brenda_parser = MagicMock()
+    #     brenda_parser.get_proteins.return_value = self.dict_proteins
+    #     print(testbrendapy.data_brenda(brenda_parser, list_ec, d_p_setting))
+    #     exit()
+        # self.mock_brenda_parser = MagicMock()
+        # self.mock_brenda_parser.get_proteins(self.list_ec).return_value = {'1': self.dict_proteins}
         # self.dict_proteins.data.return_value = {'data' : self.dict_proteins}
 
-    def test_data_brenda(self):
-        results = testbrendapy.data_brenda(self.mock_brenda_parser, self.list_ec, self.d_p_setting)
-        print(results)
+    # def test_data_brenda(self):
+    #     results = testbrendapy.data_brenda(self.mock_brenda_parser, self.list_ec, self.d_p_setting)
+    #     print(results)
 
 
 if __name__ == '__main__':
