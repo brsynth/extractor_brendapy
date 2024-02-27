@@ -6,6 +6,7 @@ Created on Thu Oct  5 13:53:41 2023
 @author: nparis
 """
 import json
+import logging
 
 from collections import defaultdict
 from datetime import datetime
@@ -100,6 +101,7 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
                 d_index[str(d_kinetic[i_subst]['substrate'])][p_cine].append(i_subst)
         except KeyError:
             pass
+            logging.warning('Exception of key error')
     return d_index
 
 
@@ -138,7 +140,10 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                     d_index[kinetic].update({str(index) : dict_proteins[kinetic][index]['comment']})
             except KeyError:
                 pass
+                logging.warning('Exception of key error. \
+                                Because, a comment with no value is ignored')
                 #probleme avec certain commentaire ou la valeur est '-'
+                #Mettre plus d'explication
     return d_index
 
 
@@ -237,6 +242,8 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
             d_result[str(p_kinetic + '_' + parameter_k)] = value_parameter
         except KeyError:
             pass
+            logging.warning('Exception of key error. \
+                            Because, a comment with no value is ignored')
             #Il peut y avoir un probleme avec le comment
     return d_result
 
@@ -274,7 +281,7 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
 
     Parameters
     ----------
-    para_list_dict : list
+    para_list_dict : list'-'},
         list of parametres /d_p_setting['p_list_dict']
     protein_data : dict
         brenda protein data
@@ -333,6 +340,7 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict,
                                     index_comment, p_kine)
         except KeyError:
             pass
+            logging.warning('Exception of key error.')
     return d
 
 
