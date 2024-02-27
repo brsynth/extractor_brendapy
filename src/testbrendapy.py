@@ -13,7 +13,7 @@ from datetime import datetime
 
 # =============================================================================
 
-# Pour cree une base de donnees qui servira comme jeux d'entrainement pour
+# Creation une base de donnees qui servira comme jeux d'entrainement pour
 # du machine learning
 
 # =============================================================================
@@ -142,8 +142,9 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                 pass
                 logging.warning('Exception of key error. \
                                 Because, a comment with no value is ignored')
-                #probleme avec certain commentaire ou la valeur est '-'
-                #Mettre plus d'explication
+                # Probleme avec certain commentaire ou la valeur est '-'
+                # Dans ce cas, le commentaire est ignore donc pas ajoute a la 
+                # base de donnees
     return d_index
 
 
@@ -230,6 +231,7 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     Returns
     -------
     d_result : dict
+        Dict with data brenda
         Dictionnaire avec les donnees extraites de brenda.
 
     """
@@ -244,7 +246,9 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
             pass
             logging.warning('Exception of key error. \
                             Because, a comment with no value is ignored')
-            #Il peut y avoir un probleme avec le comment
+            # Probleme avec certain commentaire ou la valeur est '-'
+            # Dans ce cas, le commentaire est ignore donc pas ajoute a la 
+            # base de donnees
     return d_result
 
 
@@ -281,7 +285,7 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
 
     Parameters
     ----------
-    para_list_dict : list'-'},
+    para_list_dict : list
         list of parametres /d_p_setting['p_list_dict']
     protein_data : dict
         brenda protein data
@@ -309,8 +313,6 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
 def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict,
                             couple : dict) -> dict:
     """
-    cree le sousdictionnaire pour les parametre ayant plusieurs valeurs lie par
-    le meme commentaire.
     creates subdictionary for parameters with multiple values linked by the 
     same comment
 
@@ -326,8 +328,6 @@ def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict,
     Returns
     -------
     dict
-        dictionnaire au format json pour les commentaires identitques des 
-        parametres qui possedent plusieurs valeurs.
         dictionary in json format for identical comments on parameters with 
         multiple values.
 
@@ -452,11 +452,6 @@ def commun_lists(list1 : list, list2 : list) -> list:
     return list(set(list1) & set(list2))
 
 
-# def is_parameter_exist(d_parameter : dict, l_parameter : list):
-#     pass
-
-
-#Faire une classe
 def parameter_sorting(list_parameter : list) -> dict:
     """
     Trie les paramtres en de leur type dans la base de Brenda
