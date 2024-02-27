@@ -128,23 +128,11 @@ class TestDataBrenda(unittest.TestCase):
     def test2_d_comment_each_kinetic(self):
         d_index = {}
         d_i_substr = {'KM': [20, 21]}
-        dict_proteins = {'KM': {20: {'comment': 'comment1'}, 21: {'comment': '-'}}}
+        dict_proteins = {'KM': {20: {'comment': 'comment1'}, 21: {}}}
         
-        result = {'KM': {'20': 'comment1', '21':'-'}}
-        # with self.assertRaises(KeyError):
-        #     testbrendapy.d_comment_each_kinetic(d_index, d_i_substr, dict_proteins)
-        #     raise
+        result = {'KM': {'20': 'comment1'}}
         self.assertEqual(testbrendapy.d_comment_each_kinetic(d_index, d_i_substr,
                                                               dict_proteins), result)
-
-        # d_index = {}
-        # d_i_substr = {'TN': [16], 'KM': [20, 21]}
-        # dict_proteins = {'TN': {16: {'comment': '-'}},
-        #                 'KM': {20: {'comment': '-'},
-        #                         21: {'comment': 'pH 7.0, 25°C, mutant N107L <17>'}}}
-        # self.assertRaises(KeyError, testbrendapy.d_comment_each_kinetic, d_index,
-        #                   d_i_substr,dict_proteins)
-        # raise
 
     def test_find_keys_with_similar_values(self):
         d_test = {'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
