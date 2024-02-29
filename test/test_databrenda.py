@@ -18,42 +18,50 @@ class TestDataBrenda(unittest.TestCase):
 
     def setUp(self):
         self.dict_proteins = OrderedDict([('protein_id', 1),
-                                          ('ec', '1.1.1.1'),
-                                          ('organism', 'Gallus gallus'),
-                                          ('taxonomy', 9031),
-                                          ('uniprot', None),
-                                          ('KM',
-                                           [{'data': '0.98 {NAD+}',
-                                             'refs': [17],
-                                             'substrate': 'NAD+',
-                                             'units': 'mM',
-                                             'value': 0.98},
-                                            {'chebi': 'CHEBI:16857',
-                                             'data': '5.38 {L-threonine}',
-                                             'refs': [1],
-                                             'substrate': 'L-threonine',
-                                             'units': 'mM',
-                                             'value': 5.38},
-                                            {'chebi': 'CHEBI:16857',
-                                             'data': '8.4 {L-threonine}',
-                                             'refs': [17],
-                                             'substrate': 'L-threonine',
-                                             'units': 'mM',
-                                             'value': 8.4},
-                                            {'data': '0.19 {NAD+}',
-                                             'refs': [1, 16, 18],
-                                             'substrate': 'NAD+',
-                                             'units': 'mM',
-                                             'value': 0.19}]),
-                                          ('RN', {'alcohol dehydrogenase'}),
-                                          ('RT', {'reduction', 'oxidation', 'redox reaction'}),
-                                          ('SA', [{'comment': '2 isozmyes with various '
-                                                   'substrates, overview <113>;',
-                                                   'data': '-999.0',
-                                                   'refs': [35, 125],
-                                                   'units': 'µmol/min/mg'}]),
-                                          ('SN', {'alcohol:NAD+ oxidoreductase'}),
-                                          ('tissues', {'BTO:0000759'})])
+                     ('ec', '1.1.1.98'),
+                     ('organism', 'Homo sapiens'),
+                     ('taxonomy', 9606),
+                     ('uniprot', None),
+                     ('CL',
+                      [{'data': '(three different genes, HAOX1, HAOX2, HAOX3, coding '
+                                'for 3 different 2-hydroxy acid oxidases, '
+                                'overexpression in Escherichia coli strain DH10B as '
+                                'His-tagged protein and in human skin fibroblasts '
+                                'GM5756-T cells as c-myc-tagged protein)',
+                        'refs': [2]}]),
+                     ('ID', '1.1.1.98'),
+                     ('LO', [{'data': 'peroxisome', 'refs': [2]}]),
+                     ('PU', [{'data': '(His-tagged protein)', 'refs': [2]}]),
+                     ('RE',
+                      {'(R)-2-hydroxystearate + NAD+ = 2-oxostearate + NADH + H+'}),
+                     ('RN', {'(R)-2-hydroxy-fatty-acid dehydrogenase'}),
+                     ('RT', {'redox reaction', 'reduction', 'oxidation'}),
+                     ('SN', {'(R)-2-hydroxystearate:NAD+ oxidoreductase'}),
+                     ('ST',
+                      [{'bto': 'BTO:0000759',
+                        'comment': '#1# HAOX1 and HAOX2 <2>',
+                        'data': 'liver',
+                        'refs': [2]},
+                       {'bto': 'BTO:0000988',
+                        'comment': '#1# HAOX1 and, exclusively, HAOX3 <2>',
+                        'data': 'pancreas',
+                        'refs': [2]},
+                       {'bto': 'BTO:0000671',
+                        'comment': '#1# HAOX2 <2>',
+                        'data': 'kidney',
+                        'refs': [1, 2]}]),
+                     ('references',
+                      {1: {'info': 'Levis, G.M.: 2-Hydroxy fatty acid oxidases of rat '
+                                   'kidney. Biochem. Biophys. Res. Commun. (1970) 38, '
+                                   '470-477.',
+                           'pubmed': 5443694},
+                       2: {'info': 'Jones, J.M.; Morrell, J.C.; Gould, S.J.: '
+                                   'Identification and characterization of HAOX1, '
+                                   'HAOX2, and HAOX3, three human peroxisomal '
+                                   '2-hydroxy acid oxidases. J. Biol. Chem. (2000) '
+                                   '275, 12590-12597.',
+                           'pubmed': 10777549}}),
+                     ('tissues', {'BTO:0000988', 'BTO:0000671', 'BTO:0000759'})])
 
     def test_name_new_file_created(self):
         date_time = datetime.now()
@@ -182,7 +190,6 @@ class TestDataBrenda(unittest.TestCase):
         self.assertEqual(testbrendapy.create_subdict_json(d_temporaire, d_p_setting,
                                              dict_proteins, i_sub_d_brenda,
                                              p_kinetic), result)
-
 
     def test_create_file_json(self):
         with TemporaryDirectory() as temp_dir:
@@ -315,9 +322,22 @@ class TestDataBrenda(unittest.TestCase):
         # self.mock_brenda_parser.get_proteins(self.list_ec).return_value = {'1': self.dict_proteins}
         # self.dict_proteins.data.return_value = {'data' : self.dict_proteins}
 
-    # def test_data_brenda(self):
-    #     results = testbrendapy.data_brenda(self.mock_brenda_parser, self.list_ec, self.d_p_setting)
-    #     print(results)
+    def test_data_brenda(self):
+        # from brendapy import BrendaParser
+        # Brendadata = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+        list_ec = ['1.1.1.98']
+        d_p_setting = {'p_str': ["ec", "organism"],
+                        'p_list_dict': ['ST'],
+                        'key_p_list_dict' : ['value']
+                        }
+        # a = Brendadata.get_proteins('1.1.1.98')
+        mock_brenda_parser = MagicMock()
+        mock_brenda_parser2 = MagicMock()
+        mock_brenda_parser.get_proteins.return_value = mock_brenda_parser2 #{'1': self.dict_proteins}
+        mock_brenda_parser2.data.return_value = self.dict_proteins
+        results = testbrendapy.data_brenda(mock_brenda_parser, list_ec, d_p_setting)
+        print(results)
+        # self.assertEqual(results, [])
 
 
 if __name__ == '__main__':
