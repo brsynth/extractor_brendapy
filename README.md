@@ -19,9 +19,7 @@ path_files : _path_ _to_ _the_ _folder_ _containing_ _data_brenda.txt_ _and_
 _file_ _result_ _json._
 
 ```
-list_parameter=[]
-path_files= 
-python -m brenda_enz_code list_parameter path_files
+python -m brenda_enz_code --list_parameters "ec ..." --path_file_databrenda ""
 ```
 
 List of possible parameters :
