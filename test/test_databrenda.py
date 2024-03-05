@@ -12,7 +12,7 @@ from datetime import datetime
 import os
 import json
 from tempfile import TemporaryDirectory
-from unittest.mock import MagicMock
+from unittest import mock
 
 class TestDataBrenda(unittest.TestCase):
 
@@ -23,44 +23,18 @@ class TestDataBrenda(unittest.TestCase):
                      ('taxonomy', 9606),
                      ('uniprot', None),
                      ('CL',
-                      [{'data': '(three different genes, HAOX1, HAOX2, HAOX3, coding '
-                                'for 3 different 2-hydroxy acid oxidases, '
-                                'overexpression in Escherichia coli strain DH10B as '
-                                'His-tagged protein and in human skin fibroblasts '
-                                'GM5756-T cells as c-myc-tagged protein)',
+                      [{'substrate' : 'substrate',
+                        'data': '3 different genes, HAOX1, HAOX2, HAOX3',
                         'refs': [2]}]),
                      ('ID', '1.1.1.98'),
                      ('LO', [{'data': 'peroxisome', 'refs': [2]}]),
-                     ('PU', [{'data': '(His-tagged protein)', 'refs': [2]}]),
-                     ('RE',
-                      {'(R)-2-hydroxystearate + NAD+ = 2-oxostearate + NADH + H+'}),
                      ('RN', {'(R)-2-hydroxy-fatty-acid dehydrogenase'}),
                      ('RT', {'redox reaction', 'reduction', 'oxidation'}),
-                     ('SN', {'(R)-2-hydroxystearate:NAD+ oxidoreductase'}),
-                     ('ST',
-                      [{'bto': 'BTO:0000759',
-                        'comment': '#1# HAOX1 and HAOX2 <2>',
-                        'data': 'liver',
-                        'refs': [2]},
-                       {'bto': 'BTO:0000988',
-                        'comment': '#1# HAOX1 and, exclusively, HAOX3 <2>',
-                        'data': 'pancreas',
-                        'refs': [2]},
-                       {'bto': 'BTO:0000671',
-                        'comment': '#1# HAOX2 <2>',
-                        'data': 'kidney',
-                        'refs': [1, 2]}]),
                      ('references',
                       {1: {'info': 'Levis, G.M.: 2-Hydroxy fatty acid oxidases of rat '
                                    'kidney. Biochem. Biophys. Res. Commun. (1970) 38, '
                                    '470-477.',
-                           'pubmed': 5443694},
-                       2: {'info': 'Jones, J.M.; Morrell, J.C.; Gould, S.J.: '
-                                   'Identification and characterization of HAOX1, '
-                                   'HAOX2, and HAOX3, three human peroxisomal '
-                                   '2-hydroxy acid oxidases. J. Biol. Chem. (2000) '
-                                   '275, 12590-12597.',
-                           'pubmed': 10777549}}),
+                           'pubmed': 5443694}}),
                      ('tissues', {'BTO:0000988', 'BTO:0000671', 'BTO:0000759'})])
 
     def test_name_new_file_created(self):
@@ -300,44 +274,45 @@ class TestDataBrenda(unittest.TestCase):
         # 'test2_key1': '1'
         self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '4'})
 
-    # def test4(self):
-    #     dict_test = OrderedDict([('test1', 5), ('test2', '1.1.1.103'),
-    #                               ('test3', 'Homo sapiens'), ('test4', None),
-    #                               ('test5', {1: {'t1': 'b1', 't2': 123}}),
-    #                               ('test6', set())])
-    #     list_ec = ['1.1.1.103']
-    #     d_p_setting = {'p_str': ['param1', 'param2'],
-    #                         'p_list_dict': ['test1', 'test2'],
-    #                         'key_p_list_dict' : ['key1']}
-    #     dict_protein = {'param1': 'value1', 'param2': 'value2',
-    #                           'test1': [{'key1': '1', 'substrate': '2'},
-    #                                     {'key1': '1', 'substrate': '2'}],
-    #                           'test2': [{'substrate': '1', 'key1': '2'},
-    #                                     {'key1': '4', 'substrate': '2'}]}
-    #     brenda_parser = MagicMock()
-    #     brenda_parser.get_proteins.return_value = self.dict_proteins
-    #     print(testbrendapy.data_brenda(brenda_parser, list_ec, d_p_setting))
-    #     exit()
-        # self.mock_brenda_parser = MagicMock()
-        # self.mock_brenda_parser.get_proteins(self.list_ec).return_value = {'1': self.dict_proteins}
-        # self.dict_proteins.data.return_value = {'data' : self.dict_proteins}
-
-    def test_data_brenda(self):
-        # from brendapy import BrendaParser
-        # Brendadata = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+    def test1_data_brenda(self):
         list_ec = ['1.1.1.98']
         d_p_setting = {'p_str': ["ec", "organism"],
-                        'p_list_dict': ['ST'],
-                        'key_p_list_dict' : ['value']
+                        'p_list_dict': ['CL'],
+                        'key_p_list_dict' : ['data']
                         }
-        # a = Brendadata.get_proteins('1.1.1.98')
-        mock_brenda_parser = MagicMock()
-        mock_brenda_parser2 = MagicMock()
-        mock_brenda_parser.get_proteins.return_value = mock_brenda_parser2 #{'1': self.dict_proteins}
-        mock_brenda_parser2.data.return_value = self.dict_proteins
+        # Librairie Mock
+        #
+
+        # a = mock.MagicMock(name = 'dict_proteins')
+        # a.data.return_value = self.dict_proteins
+        # print(a.data())
+
+        mock_brenda_parser2 = mock.MagicMock(name = 'dict_proteins')
+        mock_brenda_parser = mock.Mock()
+        # mock_brenda_parser2.data = Mock(return_value = self.dict_proteins)
+        # mock_brenda_parser = MagicMock(get_proteins = {'data' : mock_brenda_parser2})
+        mock_brenda_parser.get_proteins = mock.Mock(return_value = {'data' : mock_brenda_parser2})
+        mock_brenda_parser2.data = self.dict_proteins
         results = testbrendapy.data_brenda(mock_brenda_parser, list_ec, d_p_setting)
-        print(results)
-        # self.assertEqual(results, [])
+        result_expected = [{'ec': '1.1.1.98',
+                            'organism': 'Homo sapiens',
+                            'CL_data': '3 different genes, HAOX1, HAOX2, HAOX3'}]
+        # print(mock_brenda_parser.get_proteins())
+        # print('_____________')
+        # print('r', results)
+        self.assertEqual(results, result_expected)
+        # rbis = testbrendapy.data_brenda(Brendadata, ['1.1.1.98'], d_p_setting)
+        # print('...', rbis)
+
+    # def test2(self):
+    #     from brendapy import BrendaParser
+    #     Brendadata = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+    #     d_p_setting = {'p_str': ["ec", "organism", 'uniprot'],
+    #                     'p_list_dict': ['KM'],
+    #                     'key_p_list_dict' : ['value', 'substrate', 'comment']
+    #                     }
+    #     rbis = testbrendapy.data_brenda(Brendadata, ['1.1.1.1'], d_p_setting)
+    #     print('...', rbis)
 
 
 if __name__ == '__main__':
