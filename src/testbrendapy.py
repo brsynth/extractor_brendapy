@@ -379,9 +379,12 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
 
     for ec_number in list_ec:
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
+            # print(dict_proteins.data)
             if check_parameter_values(d_p_setting, dict_proteins.data):
+                # print('passe la')
                 d_index_subst = find_shared_substrate_index(d_p_setting['p_list_dict'],
                                                             dict_proteins.data)
+                # print('d_index_subst', d_index_subst)
 
                 for d_i_substr in d_index_subst.values():
                     d={}
@@ -434,19 +437,19 @@ def create_file_json(path_json : str, data : list[dict]):
 
 def commun_lists(list1 : list, list2 : list) -> list:
     """
-    selection des elements commun entre les deux listes sans redondance
+    selection of elements common to both lists without redundancy
 
     Parameters
     ----------
     list1 : list
-        liste de parametres.
+        list of parametres.
     list2 : list
-        liste de parametres.
+        list of parametres.
 
     Returns
     -------
     list
-        liste contenant uniquement les parametres communsentre les deux listes.
+        list containing only parameters common to both lists
 
     """
     return list(set(list1) & set(list2))
@@ -454,17 +457,17 @@ def commun_lists(list1 : list, list2 : list) -> list:
 
 def parameter_sorting(list_parameter : list) -> dict:
     """
-    Trie les paramtres en de leur type dans la base de Brenda
+    Sorts parameters by type in Brenda's database
 
     Parameters
     ----------
     list_parameter : list
-        liste des parametre souhaite par l'utilisateur
+        list of user-defined parameters
 
     Returns
     -------
     Dict
-        Classification des parametres souhaite par l'utilisateur
+        Classification of user-defined parameters
 
     """
     all_parameter = {'p_str' : ["ec", "uniprot", "organism", "ID"],
