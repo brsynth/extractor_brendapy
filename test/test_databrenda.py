@@ -16,27 +16,6 @@ from unittest import mock
 
 class TestDataBrenda(unittest.TestCase):
 
-    def setUp(self):
-        self.dict_proteins = OrderedDict([('protein_id', 1),
-                     ('ec', '1.1.1.98'),
-                     ('organism', 'Homo sapiens'),
-                     ('taxonomy', 9606),
-                     ('uniprot', None),
-                     ('CL',
-                      [{'substrate' : 'substrate',
-                        'data': '3 different genes, HAOX1, HAOX2, HAOX3',
-                        'refs': [2]}]),
-                     ('ID', '1.1.1.98'),
-                     ('LO', [{'data': 'peroxisome', 'refs': [2]}]),
-                     ('RN', {'(R)-2-hydroxy-fatty-acid dehydrogenase'}),
-                     ('RT', {'redox reaction', 'reduction', 'oxidation'}),
-                     ('references',
-                      {1: {'info': 'Levis, G.M.: 2-Hydroxy fatty acid oxidases of rat '
-                                   'kidney. Biochem. Biophys. Res. Commun. (1970) 38, '
-                                   '470-477.',
-                           'pubmed': 5443694}}),
-                     ('tissues', {'BTO:0000988', 'BTO:0000671', 'BTO:0000759'})])
-
     def test_name_new_file_created(self):
         date_time = datetime.now()
         formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
@@ -274,6 +253,44 @@ class TestDataBrenda(unittest.TestCase):
         # 'test2_key1': '1'
         self.assertEqual(result, {'param1': 'value1', 'test1_key1': '1', 'test2_key1': '4'})
 
+    def setUp(self):
+        self.dict_proteins = OrderedDict([('protein_id', 1),
+                     ('ec', '1.1.1.98'),
+                     ('organism', 'Homo sapiens'),
+                     ('taxonomy', 9606),
+                     ('uniprot', None),
+                     ('CL',
+                      [{'substrate' : 'substrate',
+                        'data': '3 different genes, HAOX1, HAOX2, HAOX3',
+                        'refs': [2]}]),
+                     ('ID', '1.1.1.98'),
+                     ('LO', [{'data': 'peroxisome', 'refs': [2]}]),
+                     ('RN', {'(R)-2-hydroxy-fatty-acid dehydrogenase'}),
+                     ('RT', {'redox reaction', 'reduction', 'oxidation'}),
+                     ('references',
+                      {1: {'info': 'Levis, G.M.: 2-Hydroxy fatty acid oxidases of rat '
+                                   'kidney. Biochem. Biophys. Res. Commun. (1970) 38, '
+                                   '470-477.',
+                           'pubmed': 5443694}}),
+                     ('tissues', {'BTO:0000988', 'BTO:0000671', 'BTO:0000759'})])
+
+        self.dict_proteinsbis = OrderedDict([('protein_id', 1),
+                     ('ec', '1.1.1.98'),
+                     ('organism', 'Homo sapiens'),
+                     ('taxonomy', 9606),
+                     ('uniprot', None),
+                     ('KM',
+                      [{'comment': 'at pH 8.0 and 25°C <59>', 'value': 0.0205,
+                        'substrate': 'NADPH'},
+                        {'comment': 'at pH 8.0 and 25°C <59>', 'value': 0.0264,
+                         'substrate': 'NADPH'},
+                        {'comment': 'at pH 8.0 and 25°C <59>', 'value': 0.8158,
+                         'substrate': 'acetoacetyl-CoA'},
+                        {'comment': 'at pH 8.0 and 25°C <59>', 'value': 0.8871,
+                         'substrate': 'acetoacetyl-CoA'},
+                        {'comment': '#59# mutant enzyme S40A, at pH 8.0 and 25°C <59>',
+                         'value': 0.9913, 'substrate': 'acetoacetyl-CoA'}])])
+
     def test1_data_brenda(self):
         list_ec = ['1.1.1.98']
         d_p_setting = {'p_str': ["ec", "organism"],
@@ -281,38 +298,48 @@ class TestDataBrenda(unittest.TestCase):
                         'key_p_list_dict' : ['data']
                         }
         # Librairie Mock
-        #
-
-        # a = mock.MagicMock(name = 'dict_proteins')
-        # a.data.return_value = self.dict_proteins
-        # print(a.data())
+        # mock_brenda_parser2.data = mock.Mock(return_value = self.dict_proteins)
+        # mock_brenda_parser = mock.MagicMock(get_proteins = {'data' : mock_brenda_parser2})
 
         mock_brenda_parser2 = mock.MagicMock(name = 'dict_proteins')
         mock_brenda_parser = mock.Mock()
-        # mock_brenda_parser2.data = Mock(return_value = self.dict_proteins)
-        # mock_brenda_parser = MagicMock(get_proteins = {'data' : mock_brenda_parser2})
         mock_brenda_parser.get_proteins = mock.Mock(return_value = {'data' : mock_brenda_parser2})
         mock_brenda_parser2.data = self.dict_proteins
         results = testbrendapy.data_brenda(mock_brenda_parser, list_ec, d_p_setting)
         result_expected = [{'ec': '1.1.1.98',
                             'organism': 'Homo sapiens',
                             'CL_data': '3 different genes, HAOX1, HAOX2, HAOX3'}]
-        # print(mock_brenda_parser.get_proteins())
-        # print('_____________')
-        # print('r', results)
         self.assertEqual(results, result_expected)
-        # rbis = testbrendapy.data_brenda(Brendadata, ['1.1.1.98'], d_p_setting)
-        # print('...', rbis)
 
-    # def test2(self):
-    #     from brendapy import BrendaParser
-    #     Brendadata = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
-    #     d_p_setting = {'p_str': ["ec", "organism", 'uniprot'],
-    #                     'p_list_dict': ['KM'],
-    #                     'key_p_list_dict' : ['value', 'substrate', 'comment']
-    #                     }
-    #     rbis = testbrendapy.data_brenda(Brendadata, ['1.1.1.1'], d_p_setting)
-    #     print('...', rbis)
+    def test2(self):
+        # from brendapy import BrendaParser
+        # Brendadata = BrendaParser('/home/nparis/brenda_enzyme/brenda_2023_1.txt')
+        d_p_setting = {'p_str': ["ec", "organism", 'uniprot'],
+                        'p_list_dict': ['KM'],
+                        'key_p_list_dict' : ['value', 'substrate', 'comment']
+                        }
+        # rbis = testbrendapy.data_brenda(Brendadata, ['1.1.1.100'], d_p_setting)
+        # print('...', rbis)
+        list_ec = ['1.1.1.98']
+        d_p_setting = {'p_str': ["ec", "organism"],
+                        'p_list_dict': ['KM'],
+                        'key_p_list_dict' : ['comment', 'substrate', 'value']
+                        }
+        mock_brenda_parser2 = mock.MagicMock(name = 'dict_proteins')
+        mock_brenda_parser = mock.Mock()
+        mock_brenda_parser.get_proteins = mock.Mock(return_value = {'data' : mock_brenda_parser2})
+        mock_brenda_parser2.data = self.dict_proteinsbis
+        results = testbrendapy.data_brenda(mock_brenda_parser, list_ec, d_p_setting)
+        result_expected = [{'ec': '1.1.1.98', 'organism': 'Homo sapiens',
+                            'KM_comment': 'at pH 8.0 and 25°C <59>',
+                            'KM_substrate': 'NADPH', 'KM_value': 0.0264},
+                           {'ec': '1.1.1.98', 'organism': 'Homo sapiens',
+                            'KM_comment': 'at pH 8.0 and 25°C <59>',
+                            'KM_substrate': 'acetoacetyl-CoA',
+                            'KM_value': 0.8871}]
+        # print('')
+        # print(results)
+        self.assertEqual(results, result_expected)
 
 
 if __name__ == '__main__':
