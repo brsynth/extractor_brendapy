@@ -305,8 +305,11 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
     """
     d_index_subst = {}
     for cine in para_list_dict: #d_p_setting['p_list_dict']
+        # print(cine, 'prot', protein_data)
+        # print('prot data', protein_data[cine])
         d_index_subst = find_shared_substrate(d_index_subst,
                                               protein_data[cine], cine)
+        # print('la 2', d_index_subst)
     return d_index_subst
 
 
@@ -367,9 +370,6 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
     List[Dict]
         Parameter dictionary list for each proteins.
 
-    #Dans un premier temps on va mettre dans le dictionnaire les parametres
-    #ou nous y avons acces directement
-    
     #Pour cela nous allons cree une fonction qui trier les parametre en 3 classses:
         #Ceux qui peuvent etre recuperer direct
         #Ceux qui possede plusieurs valeurs -> list de dictionnaire
@@ -381,26 +381,40 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
         for dict_proteins in BRENDA_PARSER.get_proteins(ec_number).values():
             # print(dict_proteins.data)
             if check_parameter_values(d_p_setting, dict_proteins.data):
-                # print('passe la')
                 d_index_subst = find_shared_substrate_index(d_p_setting['p_list_dict'],
                                                             dict_proteins.data)
-                # print('d_index_subst', d_index_subst)
 
                 for d_i_substr in d_index_subst.values():
                     d={}
                     d_index_comment = {}
                     for p_k, l_i_subst in d_i_substr.items():
+                        #Ceux qui possedent un substrat
+                        #Tous les valeurs sont directement insere dans dans result
                         if len(l_i_subst) == 1:
                             d = create_subdict_json(d, d_p_setting,
                                                     dict_proteins.data,
                                                     l_i_subst[0], p_k)
 
+                        #Ceux qui possedent plusieurs substrats pour un ce parametre
+                        #Les localisations des valeurs a insere dans result pour
+                        #ce parametre pour cette proteine sont temporairement stocke
+                        #dans un dict / list pour pouvoir les triers, pour ensuite
+                        #les inseres separements
+                        #Siu nous avons plusieurs commentaire pour un meme substrat
+                        #nous allons mettre chaque commentaire dans des dictionnaire_json
+                        #different mais a chaque fois avec les meme parametre
+                        #generaux qui eux ne change pas.
                         if len(l_i_subst) > 1:
                             d_index_comment = d_comment_each_kinetic(d_index_comment,
                                                                       d_i_substr,
                                                                       dict_proteins.data)
                             l_index_comment = find_keys_with_similar_values(d_index_comment)
+                            # print(d_index_comment, l_index_comment)
 
+                    #Ceux qui possedent plusieurs commentaire, qui peuvent 
+                    #etre different pour le meme parametre et le meme substrat.
+                    #Mais il peut y avoir des commentaires qui seront les meme
+                    #pour des parametres different dans ce cas ils sont mis ensemble
                     if d_index_comment:
                         for couple in l_index_comment:
                             d = pre_subdict_from_couple(d_p_setting,
