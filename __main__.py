@@ -39,16 +39,9 @@ def main():
     )
     args = parser.parse_args()
 
-    #Fusionne tout
-    # joined_list = ''.join(args.list_parameters)
-    # # separe les different caractere grace au espace
-    # new_list_parameter = joined_list.split(' ')
 
-    # new_list_parameter = list(filter(lambda x: x != '', new_list_parameter))
-    # print(args.path_file_databrenda)
-    # print(new_list_parameter)
     # laisser le run tant qu'il n'y a pas @property
-    DataSetBrenda(args.list_parameters, args.path_file_databrenda).run()
+    DataSetBrenda(args.list_parameters, args.path_file_databrenda, args.list_ec).run()
     # print(args)
 
 if __name__ == "__main__":
