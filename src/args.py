@@ -13,6 +13,7 @@ from typing import Callable
 DEFAULT_ARGS = {
     'list_parameters' : ["ec", "uniprot", "organism", "substrate", 'comment', 'KM', 'TN', 'value'],
     'path_file_databrenda': '/home/nparis/brenda_enzyme/',
+    'list_ec' :[]
 }
 
 
@@ -57,6 +58,16 @@ def add_arguments(parser : ArgumentParser) -> ArgumentParser:
         default=DEFAULT_ARGS['path_file_databrenda'],
         help='Path to the Brenda file',
     )
+    
+    parser.add_argument(
+        '--list_ec',
+        # action='append',
+        nargs='+',
+        # default=DEFAULT_ARGS['list_ec'],
+        help='List of ec',
+        # required=True
+    )
+    
     parser.add_argument(
         '-d', '--debug',
         action='store_true',
