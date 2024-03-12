@@ -19,7 +19,7 @@ path_files : _path_ _to_ _the_ _folder_ _containing_ _data_brenda.txt_ _and_
 _file_ _result_ _json._
 
 ```
-python -m brenda_enz_code --list_parameters "ec ..." --path_file_databrenda ""
+python -m brenda_enz_code --list_parameters ec unniprot ... --path_file_databrenda ""
 ```
 
 List of possible parameters :
