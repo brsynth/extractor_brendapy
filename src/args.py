@@ -44,9 +44,11 @@ def add_arguments(parser : ArgumentParser) -> ArgumentParser:
     #Optional arg
     parser.add_argument(
         '--list_parameters',
-        type= list,
+        # action='append',
+        nargs='+',
         default=DEFAULT_ARGS['list_parameters'],
         help='List of elements',
+        # required=True
     )
 
     parser.add_argument(
