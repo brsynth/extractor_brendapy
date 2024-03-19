@@ -19,7 +19,7 @@ class TestDataBrenda(unittest.TestCase):
     def test_name_new_file_created(self):
         date_time = datetime.now()
         formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
-        result = 'setbrenda_' + formatagedate + '.json'
+        result = 'setbrenda' + formatagedate + '.json'
         self.assertEqual(testbrendapy.name_new_file_created(), result)
 
     def test_is_parameter_values(self):
