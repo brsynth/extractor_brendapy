@@ -104,24 +104,23 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
 def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                            dict_proteins : dict) -> dict:
     """
-    Associe tous les commentaires du parametre a son index
+    Associates all parameter comments with its index
 
     Parameters
     ----------
     d_index : dict
         
     d_i_substr : dict
-        dictionnaire pour chaque parametre souhaite avec la liste des index 
-        dans la base de donne de brenda pour ce substrat.
+        dictionary for each desired parameter with the list of indexes  in the
+        brenda database for that substrate
     dict_proteins : OrderedDict
-        Base de donnes de Brenda sous forme de dictionnaire
+        Brenda is dictionary database
 
     Returns
     -------
     d_index : dict(dict)
-        Dictionnaire Ayant pour clef les parametres souhaite, pour valeur un
-        dictionnaire avec l'index et son commentaire dans la base de donne de
-        Brenda.
+        Dictionary whose key is the desired parameters, whose value is a
+        dictionary with the index and its comment in the Brenda is database.
         Ex: {
             'TN': {'16': 'pH 7.0, 25°C, mutant N107D <17>'},
              'KM': {'20': 'pH 7.0, 25°C, mutant N107D <17>',
@@ -138,9 +137,8 @@ def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                 pass
                 logging.warning('Exception of key error. \
                                 Because, a comment with no value is ignored')
-                # Probleme avec certain commentaire ou la valeur est '-'
-                # Dans ce cas, le commentaire est ignore donc pas ajoute a la 
-                # base de donnees
+                # Problem with certain comments where the value is '-'.
+                # In this case, the comment is ignored and not added to the database.
     return d_index
 
 
