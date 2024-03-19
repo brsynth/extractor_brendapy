@@ -185,43 +185,34 @@ def find_keys_with_similar_values(main_dict: dict) -> list[dict]:
 def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
                         i_sub_d_brenda, p_kinetic):
     """
-    Mets les informations extrait de Brenda au format JSON
-
-    Cette fonction extrait les données des BRENDA qui sont stockes dans 
-    dict_proteins en selectionnent les valeurs des parametres qui sont 
-    specifies dans d_p_setting et les ajoute a d_result.
-
-    Si une key necessaire est manquante dans dict_proteins, elle est ignoree.
-
     Put information extracted from Brenda in JSON format
 
-    This function extracts data from BRENDAs stored in 
-    dict_proteins by selecting the parameter values specified in 
-    specified in d_p_setting and adds them to d_result.
+    This function extracts data from BRENDAs stored in dict_proteins by
+    selecting the parameter values specified in specified in d_p_setting and
+    adds them to d_result.
 
     If a required key is missing in dict_proteins, it is ignored.
 
     Parameters
     ----------
     d_result : dict
-        Dictionnaire des resultats des données extraites de brenda
+        Results dictionary for data extracted from brenda
     d_p_setting : dict
         Dictionary of configuration parameters.
     dict_proteins : OrderedDict
-        Base de donnes de Brenda sous forme de dictionnaire.
-    i_sub_d_brenda : TYPE
-        index sous dictionnaire de Brenda.
-    p_kinetic : TYPE
-        parametre qui est stocke comme list(dict) comme KM ou TN ...
+        Brenda database in dictionary format
+    i_sub_d_brenda :
+        Brenda is sub-dictionary index
+    p_kinetic :
+        Parameter which is stored as list(dict) like KM or TN ...
 
     Returns
     -------
     d_result : dict
         Dict with data brenda
-        Dictionnaire avec les donnees extraites de brenda.
+        Dictionary with data extracted from brenda
 
     """
-    #mettre **kwarg
     for parameter in d_p_setting['p_str']:
         d_result[str(parameter)] = dict_proteins[parameter]
     for parameter_k in d_p_setting['key_p_list_dict']:
@@ -232,9 +223,8 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
             pass
             logging.warning('Exception of key error. \
                             Because, a comment with no value is ignored')
-            # Probleme avec certain commentaire ou la valeur est '-'
-            # Dans ce cas, le commentaire est ignore donc pas ajoute a la 
-            # base de donnees
+            # Problem with certain comments where the value is '-'.
+            # In this case, the comment is ignored and not added to the database.
     return d_result
 
 
