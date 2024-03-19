@@ -30,29 +30,28 @@ def name_new_file_created() -> str:
     """
     date_time = datetime.now()
     formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
-    return 'setbrenda_' + formatagedate + '.json'
+    return 'setbrenda' + formatagedate + '.json'
 
 
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
     """
-    Verifie que tous les parametre de la liste sont dans dict_proteins.data
-    Donc si ils possedent une valeur dans ce cas retourne TRUE
+    Checks that all the parameters in the list are in dict_proteins.data
+    So if they have a value in this case, return TRUE
 
     Parameters
     ----------
     list_p : list
-        liste des parametre a verifier.
+        list of parameters to be checked
     dict_proteins_data : OrderedDict
-        Dictionnaire ou il y a tous les parametre connu dans Brenda.
+        Dictionary with all the parameters known to Brenda
 
     Returns
     -------
     bool
-        retourne True ou False.
+        return True or False.
 
     """
     for k_parameter in list_p:
-        # n'accepte pas le if not ... and ... :
         if not (k_parameter in dict_proteins_data):
             return False
         if not dict_proteins_data[str(k_parameter)]:
