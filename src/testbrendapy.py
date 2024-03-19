@@ -61,35 +61,32 @@ def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
 
 def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dict:
     """
-    Dictionnaire qui rassemble les index des substrats qui sont present pour les
-    differents parametre souhaite (stocke sous forme de list de dict dans brenda)
-
     Dictionary that gathers the indexes of substrates that are present for the
     desired parameters (stored as a dict list in brenda)
 
-    Ex: Donne la list d'index des substrat qui sont present pour le KM et 
-    le TN si ce sont les deux type de parametre demande par l'utilisateur
+    Ex: Gives the list of substrate indexes that are present for KM and TN
+    TN if these are the two types of parameters requested by the user
     {'diacetyl' : {'KM': [1,2,3], 'TN' : [4,5,6]}}
 
     Parameters
     ----------
     d_index : dict
-        dictionnaire ayant en clef les substrat et en valeur un dictionnaire
-        pour chaque parametre souhaite avec la liste des index dans la base de
-        donne de brenda pour ce substrat.
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
     d_kinetic : dict
-        base de donne de brenda pour leur parametre sous forme de dictionnaire
-    p_cine : parametre
+        brenda database for dictionary parameters
+    p_cine : kinetic parameter
 
     Returns
     -------
     d_index : dict(dict)
-        dictionnaire ayant en clef les substrat et en valeur un dictionnaire
-        pour chaque parametre souhaite avec la liste des index dans la base de
-        donne de brenda pour ce substrat.
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
 
     """
-    # dictionnaire index pour les differents substrats
+    # index dictionary for different substrates
     for i_subst in range(len(d_kinetic)):
         try:
             if not (str(d_kinetic[i_subst]['substrate']) in d_index):
