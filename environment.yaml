@@ -1,4 +1,4 @@
-name: brendaenzcode
+name: extractor_brendapy
 channels:
   - conda-forge
   - defaults
@@ -9,4 +9,4 @@ dependencies:
   - pip:
       - brendapy==0.5.0
 
-prefix: /home/nparis/miniconda3/envs/brendaenzcode
+prefix: /home/nparis/miniconda3/envs/extractor_brendapy
