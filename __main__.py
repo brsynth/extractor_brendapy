@@ -18,22 +18,9 @@ def main():
     """
     Main function
     """
-    # try:
-    #     opts, arg = sys.getopt.getopt(sys.argv, "hg:d", ["help"])
-    # except sys.getopt.GetoptError:
-    #     #Si le script ne fonctionne pas
-    #     sys.exit(2)
-    
-    # for opt, arg in opts:
-    #     if opt in ("-h", "--help"):
-    #         # usage()
-    #         sys.exit()
-    #     elif opt == '-d':
-    #         global _debug
-    #         _debug = 1
-    
+
     parser = build_args_parser(
-        program = 'brenda_enz_code',
+        program = 'extractor_brendapy',
         description = '',
         m_add_args = add_arguments
     )

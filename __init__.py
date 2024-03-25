@@ -4,7 +4,7 @@
 @author: noparis
 """
 
-from .src.datasetbrenda import DataSetBrenda
+from .src.extractorbrendapy import DataSetBrenda
 from .src.args import build_args_parser
 
 __all__ = ['build_args_parser']
