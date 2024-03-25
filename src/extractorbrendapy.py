@@ -16,8 +16,8 @@ from brendapy import BrendaParser
 DEFAULT_FILE_NAME = 'brenda_2023_1.txt'
 # =============================================================================
 
-# Creation une base de donnees qui servira comme jeux d'entrainement pour
-# du machine learning
+# Extracts data from Brenda using Brendapy as parser.
+# To create datasets for ML training
 
 # =============================================================================
 
@@ -333,11 +333,6 @@ def data_brenda(BRENDA_PARSER, list_ec : list, d_p_setting : dict) -> list[dict]
     -------
     List[Dict]
         Parameter dictionary list for each proteins.
-
-    #Pour cela nous allons cree une fonction qui trier les parametre en 3 classses:
-        #Ceux qui peuvent etre recuperer direct
-        #Ceux qui possede plusieurs valeurs -> list de dictionnaire
-        #Ceux qui sont des parametre dans les dictionnaires : ex: substrate, comment, value
     """
     results = []
 
@@ -467,10 +462,8 @@ class DataSetBrenda:
     def __init__(self, list_paramaters : list, path_file_databrenda : str,
                  list_ec : list = []):
         self.d_parameter_setting = parameter_sorting(list_paramaters)
-        #noms du fichier avec la date et heure de creation ...
         self.path_set_brend = path_file_databrenda + name_new_file_created()
         self.path_filebrenda = path_file_databrenda + DEFAULT_FILE_NAME
-        # self.Brendadata = BrendaParser(self.path_filebrenda)
 
         # if list_ec:
         self.list_ec = list_ec
