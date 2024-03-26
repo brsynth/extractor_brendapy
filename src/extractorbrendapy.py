@@ -465,10 +465,7 @@ class DataSetBrenda:
         self.path_set_brend = path_file_databrenda + name_new_file_created()
         self.path_filebrenda = path_file_databrenda + DEFAULT_FILE_NAME
 
-        # if list_ec:
         self.list_ec = list_ec
-        # else:
-        #     self.list_ec = list_all_ec_in_data(self.Brendadata)
 
 
     def get_cinetique_parameter(self):
@@ -483,7 +480,6 @@ class DataSetBrenda:
             self.list_ec = Brendadata.keys()
             return self.list_ec
     
-    #@property -> enlever () apres le run dans l'appel de fonction
     def run(self):
         Brendadata = BrendaParser(self.path_filebrenda)
         create_file_json(self.get_path_set_brend(),
