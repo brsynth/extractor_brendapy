@@ -65,3 +65,17 @@ List of possible parameters :
 
 Installation
 ------------
+
+```
+git clone https://github.com/brsynth/extractor_brendapy.git
+cd extractor_brendapy
+conda env create -f environment.yaml -n <name>
+```
+
+Authors
+-------
+Nolwenn Paris
+Joan Hérisson
+
+Licence
+-------
