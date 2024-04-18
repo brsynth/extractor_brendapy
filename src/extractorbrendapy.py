@@ -104,6 +104,85 @@ def find_shared_substrate(d_index : dict, d_kinetic : dict, p_cine : str) -> dic
     return d_index
 
 
+def find_shared_data(d_index : dict, d_kinetic : dict, p_cine : str) -> dict:
+    """
+    Dictionary that gathers the indexes of substrates that are present for the
+    desired parameters (stored as a dict list in brenda)
+
+    Ex: Gives the list of substrate indexes that are present for KM and TN
+    TN if these are the two types of parameters requested by the user
+    {'diacetyl' : {'KM': [1,2,3], 'TN' : [4,5,6]}}
+
+    Parameters
+    ----------
+    d_index : dict
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
+    d_kinetic : dict
+        brenda database for dictionary parameters
+    p_cine : kinetic parameter
+
+    Returns
+    -------
+    d_index : dict(dict)
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
+
+    """
+    # index dictionary for different substrates
+    for i_subst in range(len(d_kinetic)):
+        try:
+            if not (str(d_kinetic[i_subst]['data']) in d_index):
+                d_index[str(d_kinetic[i_subst]['data'])] = {p_cine : [i_subst]}
+            elif not(p_cine in d_index[str(d_kinetic[i_subst]['data'])]):
+                d_index[str(d_kinetic[i_subst]['data'])].update({p_cine : [i_subst]})
+            else:
+                d_index[str(d_kinetic[i_subst]['data'])][p_cine].append(i_subst)
+        except KeyError:
+            pass
+            logging.warning('Exception of key error')
+    return d_index
+
+def find_shared_key_p_ld(d_index : dict, d_kinetic : dict, p_cine : str,
+                         v_key_p_list_dict) -> dict:
+    """
+
+
+    Parameters
+    ----------
+    d_index : dict
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
+    d_kinetic : dict
+        brenda database for dictionary parameters
+    p_cine : kinetic parameter
+
+    Returns
+    -------
+    d_index : dict(dict)
+        dictionary with substrate as key and dictionary as value for each
+        desired parameter with the list of indexes in brenda is database for
+        that substrate.
+
+    """
+    # index dictionary for different substrates
+    for i_subst in range(len(d_kinetic)):
+        try:
+            if not (str(d_kinetic[i_subst][v_key_p_list_dict]) in d_index):
+                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])] = {p_cine : [i_subst]}
+            elif not(p_cine in d_index[str(d_kinetic[i_subst][v_key_p_list_dict])]):
+                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])].update({p_cine : [i_subst]})
+            else:
+                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])][p_cine].append(i_subst)
+        except KeyError:
+            pass
+            logging.warning('Exception of key error')
+    return d_index
+
+
 def d_comment_each_kinetic(d_index : dict, d_i_substr : dict,
                            dict_proteins : dict) -> dict:
     """
@@ -266,7 +345,7 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
 
     Returns
     -------
-    d_index_subst : dict
+    d_index_subkey : dict
         Dictionary for each desired parameter, which itself contains a 
         dictionary with substrates as key and a dictionary value for each 
         desired parameter with the list of indexes in brenda is database for
@@ -275,9 +354,13 @@ def find_shared_substrate_index(para_list_dict : list, protein_data : dict) -> d
     """
     d_index_subst = {}
     for cine in para_list_dict: #d_p_setting['p_list_dict']
-        d_index_subst = find_shared_substrate(d_index_subst,
+        #substrat test
+        d_index_subkey = find_shared_substrate(d_index_subst,
                                               protein_data[cine], cine)
-    return d_index_subst
+        #no substrat -> data
+        if not d_index_subkey:
+            d_index_subkey = find_shared_data(d_index_subst,protein_data[cine], cine)
+    return d_index_subkey
 
 
 def pre_subdict_from_couple(d_p_setting : dict, protein_data : dict,
