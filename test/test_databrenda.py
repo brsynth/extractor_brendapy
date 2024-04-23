@@ -54,16 +54,19 @@ class TestDataBrenda(unittest.TestCase):
         list_test = ['test1','test5', 'test7']
         self.assertFalse(extractorbrendapy.is_parameter_values(list_test, dict_test))
 
-    def test_find_shared_substrate(self):
+    def test_find_shared_key_p_ld(self):
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
                     'value': 46.7, 'substrate': 'L-threonine'},
                   {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
                     'value': 47.3, 'substrate': 'L-threonine'}]
         d_result = {'L-threonine': {'TN': [0, 1]}}
-        self.assertDictEqual(extractorbrendapy.find_shared_substrate({}, d_test, parameter), d_result)
+        self.assertDictEqual(extractorbrendapy.find_shared_key_p_ld({}, d_test,
+                                                                     parameter,
+                                                                     'substrate'),
+                             d_result)
 
-    def test2_find_shared_substrate(self):
+    def test2_find_shared_key_p_ld(self):
         d_temporaire = {'L-threonine': {'KM': [0]}}
         parameter = 'TN'
         d_test = [{'comment': 'mutant enzyme M333E, at pH 7.5 and 37°C <46>',
@@ -71,8 +74,11 @@ class TestDataBrenda(unittest.TestCase):
                   {'comment': 'wild type enzyme, at pH 7.5 and 37°C <46>',
                     'value': 47.3, 'substrate': 'L-threonine'}]
         d_result = {'L-threonine': {'KM': [0], 'TN': [0, 1]}}
-        self.assertDictEqual(extractorbrendapy.find_shared_substrate(d_temporaire, d_test,
-                                                                parameter), d_result)
+        self.assertDictEqual(extractorbrendapy.find_shared_key_p_ld(d_temporaire,
+                                                                     d_test,
+                                                                     parameter,
+                                                                     'substrate'),
+                             d_result)
 
     def test_d_comment_each_kinetic(self):
         d_index = {}
@@ -209,17 +215,17 @@ class TestDataBrenda(unittest.TestCase):
         self.assertEqual(result,  {})
 
     def test2_find_shared_substrate_index(self):
-        para_list = ['test1', 'test2']
-        d2 = {'test1': [{'substrate': 1}, {'k2': 2}],
-              'test2': [{'k2': 3}, {'substrate': 4}]}
+        para_list = ['KM', 'KI']
+        d2 = {'KM': [{'substrate': 1}, {'k2': 2}],
+              'KI': [{'k2': 3}, {'substrate': 4}]}
         result = extractorbrendapy.find_shared_substrate_index(para_list, d2)
-        self.assertEqual(result, {'1': {'test1': [0]}, '4': {'test2': [1]}})
+        self.assertEqual(result, {'1': {'KM': [0]}, '4': {'KI': [1]}})
 
     def test3_find_shared_substrate_index(self):
         para_list = ['test1', 'test2', 'test3']
-        d3 = {'test1': [{'substrate': 1}, {'k2': 2}],
-              'test2': [{'k2': 3}, {'substrate': 4}],
-              'test3' : [{'k3': 3}, {'k1': 5}, {'k2': 6}, {'substrate': 4}]}
+        d3 = {'test1': [{'data': 1}, {'k2': 2}],
+              'test2': [{'k2': 3}, {'data': 4}],
+              'test3' : [{'k3': 3}, {'k1': 5}, {'k2': 6}, {'data': 4}]}
         result = extractorbrendapy.find_shared_substrate_index(para_list, d3)
         self.assertEqual(result, {'1': {'test1': [0]}, '4': {'test2': [1], 'test3': [3]}})
 
@@ -341,6 +347,11 @@ class TestDataBrenda(unittest.TestCase):
         # print(results)
         self.assertEqual(results, result_expected)
 
+    def test_k_subdict_parameter_KM(self):
+       self.assertEqual(extractorbrendapy.k_subdict_parameter('KM'), 'substrate')
+
+    def test_k_subdict_parameter_exception(self):
+        self.assertEqual(extractorbrendapy.k_subdict_parameter('other'), 'data')
 
 if __name__ == '__main__':
     unittest.main()
