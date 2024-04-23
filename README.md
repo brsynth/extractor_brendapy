@@ -40,6 +40,12 @@ ec; uniprot; organism; ID; substrate; value; comment; units; refs; data; chebi;
 KM; KKM; KI; TN; IC50; ref; TS; SY; SU; ST; SP; SA; PU; NSP; MW; LO; GI; IN; 
 CL; CF; AP; tissues; SN; RT; RN; RE
 
+Please note:
+When you want the parameters 'KM', 'KKM', 'KI', 'TN', 'IC50', you must add 
+**substrate** to the list of requested elements.
+
+For parameters: "ref", "TS", "SY", "SU", "ST", "SP", "SA", "PU", "NSP", "MW", 
+"LO", "GI", "IN", "CL", "CF", "AP" add **data**.
 
 Authors
 -------
