@@ -71,6 +71,8 @@ def find_shared_key_p_ld(d_index : dict, d_kinetic : dict, p_cine : str,
     Ex: Gives the list of substrate indexes that are present for KM and TN
     TN if these are the two types of parameters requested by the user
     {'diacetyl' : {'KM': [1,2,3], 'TN' : [4,5,6]}}
+    
+    Index not taken into account when data value equals : more = ?
 
     Parameters
     ----------
@@ -93,12 +95,13 @@ def find_shared_key_p_ld(d_index : dict, d_kinetic : dict, p_cine : str,
     # index dictionary for different substrates
     for i_subst in range(len(d_kinetic)):
         try:
-            if not (str(d_kinetic[i_subst][v_key_p_list_dict]) in d_index):
-                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])] = {p_cine : [i_subst]}
-            elif not(p_cine in d_index[str(d_kinetic[i_subst][v_key_p_list_dict])]):
-                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])].update({p_cine : [i_subst]})
-            else:
-                d_index[str(d_kinetic[i_subst][v_key_p_list_dict])][p_cine].append(i_subst)
+            if str(d_kinetic[i_subst][v_key_p_list_dict]) != 'more = ?':
+                if not (str(d_kinetic[i_subst][v_key_p_list_dict]) in d_index):
+                    d_index[str(d_kinetic[i_subst][v_key_p_list_dict])] = {p_cine : [i_subst]}
+                elif not(p_cine in d_index[str(d_kinetic[i_subst][v_key_p_list_dict])]):
+                    d_index[str(d_kinetic[i_subst][v_key_p_list_dict])].update({p_cine : [i_subst]})
+                else:
+                    d_index[str(d_kinetic[i_subst][v_key_p_list_dict])][p_cine].append(i_subst)
         except KeyError:
             pass
             logging.warning('Exception of key error')
@@ -222,6 +225,9 @@ def create_subdict_json(d_result, d_p_setting : dict, dict_proteins : dict,
     for parameter_k in d_p_setting['key_p_list_dict']:
         try:
             value_parameter = dict_proteins[p_kinetic][i_sub_d_brenda][parameter_k]
+            # if value_parameter == 'more = ?':
+            #     logging.warning('value : more = ? not accepted')
+            # else:
             d_result[str(p_kinetic + '_' + parameter_k)] = value_parameter
         except KeyError:
             pass
