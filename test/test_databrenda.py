@@ -80,6 +80,26 @@ class TestDataBrenda(unittest.TestCase):
                                                                      'substrate'),
                              d_result)
 
+    def test3_find_shared_key_p_ld(self):
+        parameter = 'SP'
+        d_test = [{'data': 'ex1'},
+                  {'data': 'ex2'}]
+        d_result = {'ex1': {'SP': [0]}, 'ex2': {'SP': [1]}}
+        self.assertDictEqual(extractorbrendapy.find_shared_key_p_ld({}, d_test,
+                                                                    parameter,
+                                                                    'data'),
+                             d_result)
+
+    def test4_find_shared_key_p_ld(self):
+        parameter = 'SP'
+        d_test = [{'data': 'more = ?'},
+                  {'data': 'ex2'}]
+        d_result = {'ex2': {'SP': [1]}}
+        self.assertDictEqual(extractorbrendapy.find_shared_key_p_ld({}, d_test,
+                                                                    parameter,
+                                                                    'data'),
+                             d_result)
+
     def test_d_comment_each_kinetic(self):
         d_index = {}
         d_i_substr = {'TN': [16], 'KM': [20, 21]}
