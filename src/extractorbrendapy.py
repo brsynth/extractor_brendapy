@@ -33,7 +33,7 @@ def name_new_file_created() -> str:
     """
     date_time = datetime.now()
     formatagedate = date_time.strftime('-%Y-%m-%d-%H-%M-%S')
-    return 'setbrenda' + formatagedate + '.json'
+    return 'extractorbrendapy' + formatagedate + '.json'
 
 
 def is_parameter_values(list_p : list, dict_proteins_data : dict) -> bool:
@@ -495,18 +495,25 @@ def parameter_sorting(list_parameter : list) -> dict:
 
 class DataSetBrenda:
     def __init__(self, list_paramaters : list, path_file_databrenda : str,
-                 list_ec : list = []):
+                 namefile : str, list_ec : list = []):
+
+        if namefile:
+            self.namefile = namefile
+        else:
+            self.namefile = name_new_file_created()
+
         self.d_parameter_setting = parameter_sorting(list_paramaters)
-        self.path_set_brend = path_file_databrenda + name_new_file_created()
+        self.path_set_brend = path_file_databrenda + self.namefile
         self.path_filebrenda = path_file_databrenda + DEFAULT_FILE_NAME
 
         self.list_ec = list_ec
-
 
     def get_cinetique_parameter(self):
         return self.d_parameter_setting
     def get_path_set_brend(self):
         return self.path_set_brend
+    def get_namefile(self):
+        return self.namefile
 
     def get_list_ec(self, Brendadata):
         if self.list_ec:
@@ -514,7 +521,7 @@ class DataSetBrenda:
         else:
             self.list_ec = Brendadata.keys()
             return self.list_ec
-    
+
     def run(self):
         Brendadata = BrendaParser(self.path_filebrenda)
         create_file_json(self.get_path_set_brend(),

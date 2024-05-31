@@ -58,7 +58,7 @@ def add_arguments(parser : ArgumentParser) -> ArgumentParser:
         default=DEFAULT_ARGS['path_file_databrenda'],
         help='Path to the Brenda file',
     )
-    
+
     parser.add_argument(
         '--list_ec',
         # action='append',
@@ -67,7 +67,14 @@ def add_arguments(parser : ArgumentParser) -> ArgumentParser:
         help='List of ec',
         # required=True
     )
-    
+
+    parser.add_argument(
+        '--namefile',
+        nargs='+',
+        # default=DEFAULT_ARGS['namefile'],
+        help='name of file',
+    )
+
     parser.add_argument(
         '-d', '--debug',
         action='store_true',

@@ -28,7 +28,8 @@ def main():
 
 
     # laisser le run tant qu'il n'y a pas @property
-    DataSetBrenda(args.list_parameters, args.path_file_databrenda, args.list_ec).run()
+    DataSetBrenda(args.list_parameters, args.path_file_databrenda,
+                  args.list_ec, args.namefile).run()
     # print(args)
 
 if __name__ == "__main__":
