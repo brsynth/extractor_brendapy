@@ -7,3 +7,19 @@ import unittest
 import os
 import json
 from tempfile import TemporaryDirectory
+import RMX_file_creator as RMX
+
+class TestRMXFile(unittest.TestCase):
+    def test1_molecule_sep(self):
+        r = RMX.molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+')
+        desired_r = [(1, 'monohexosylceramide'), (2, 'ferrocytochrome b5'),
+                     (1, 'O2'), (2, 'H')]
+        self.assertListEqual(r, desired_r)
+
+    def test2_molecule_sep(self):
+        r = RMX.molecule_sep('ATP + H2O')
+        desired_r = [(1, 'ATP'), (1, 'H2O')]
+        self.assertListEqual(r, desired_r)
+
+if __name__ == '__main__':
+    unittest.main()
