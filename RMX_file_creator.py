@@ -19,18 +19,19 @@ import re
 
 def molecule_sep(elements: str):
     """
+    Separates a string of chemical elements into a list of tuples containing 
+    coefficients and molecules.
     
-
     Parameters
     ----------
     elements : str
-        DESCRIPTION.
-
+        A string representing chemical elements and their coefficients
+    
     Returns
     -------
-    result : TYPE
-        DESCRIPTION.
-
+    list of tuple
+        A list of tuples, where each tuple contains an integer coefficient 
+        and a string molecule. JSON tuples = list
     """
     eq = elements.split('+')
     result = []
@@ -57,21 +58,22 @@ def molecule_sep(elements: str):
 
 def modif_file(path : str, input_file : str, file_out : str):
     """
+    Modifies a JSON file by parsing chemical reactions and adding substrate 
+    and product information.
     
-
     Parameters
     ----------
     path : str
-        DESCRIPTION.
+        The directory path where the input and output files are located
     input_file : str
-        DESCRIPTION.
+        The name of the input JSON file containing reaction data
     file_out : str
-        DESCRIPTION.
-
+        The name of the output JSON file where modified data will be saved
+    
     Returns
     -------
-    None.
-
+    This function does not return any value. It writes the modified data to
+    the specified output file.
     """
     with open(path + input_file, "r") as file:
         data = json.load(file)
@@ -80,12 +82,33 @@ def modif_file(path : str, input_file : str, file_out : str):
         i_symbol_egale = reaction_SP.find("=")
         substrates = molecule_sep(reaction_SP[:i_symbol_egale-1])
         produits = molecule_sep(reaction_SP[i_symbol_egale+2:])
-    
+        # re-extrait les ID a partir de sub et prd
+        #ou
+        # mol sep retourne result et la list des ID pour faire le fichier CMP
+        #enregistre avec une chaine vide et c'est plus tard que je mets le smile
         element['substrates'] = substrates
         element['products'] = produits
     
     with open(path + file_out, "w", encoding = 'utf8') as file:
         json.dump(data, file, indent = 2, ensure_ascii=False)
+
+
+def add_rxn_filename(file: str) -> str:
+    """
+    Adds 'RXN' to the filename.
+    
+    Parameters
+    ----------
+    file : str
+        The name of the file to which 'RXN' will be added.
+    
+    Returns
+    -------
+    new_filename : str
+        The new filename with 'RXN' added at the beginning.
+    """
+    new_file = f"RXN_{file}"
+    return new_file
 
 
 class RMXData:
@@ -94,8 +117,8 @@ class RMXData:
         self.input_file = input_file
         if file_out:
             self.file_out = file_out
-        # else:
-        #     self.file_out = faire une fonction qui rajoute RMX dans le noms du fichier d entre
+        else:
+            self.file_out = add_rxn_filename(input_file)
 
     def get_path(self):
         return self.path
