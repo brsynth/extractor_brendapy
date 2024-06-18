@@ -7,7 +7,9 @@ Created on Tue May 14 11:55:58 2024
 """
 import json
 import re
-
+import requests
+from rdkit import Chem
+from zeep import Client
 # Lire le fichier
 # Lire la ligne data
 # Ajouter au fichier susbtrat et produit
@@ -16,6 +18,10 @@ import re
 # path = '/home/nparis/brenda_enzyme/'
 # input_file = 'test1.json'
 # file_out = 'out1.json'
+
+# =============================================================================
+# PARTIE RXN
+# =============================================================================
 
 def molecule_sep(elements: str):
     """
@@ -93,7 +99,7 @@ def modif_file(path : str, input_file : str, file_out : str):
         json.dump(data, file, indent = 2, ensure_ascii=False)
 
 
-def add_rxn_filename(file: str) -> str:
+def new_filename(file: str, name : str) -> str:
     """
     Adds 'RXN' to the filename.
     
@@ -107,18 +113,71 @@ def add_rxn_filename(file: str) -> str:
     new_filename : str
         The new filename with 'RXN' added at the beginning.
     """
-    new_file = f"RXN_{file}"
+    new_file = f"{name}_{file}"
     return new_file
 
+# =============================================================================
+# PARTIE CMP
+# =============================================================================
 
-class RMXData:
+def get_pubchem_cid_from_name(protein):
+    url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{protein}/cids/JSON"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if 'IdentifierList' in data and 'CID' in data['IdentifierList']:
+            return data['IdentifierList']['CID'][0]
+    return None
+
+p = "ATP"
+pubchem_cid = get_pubchem_cid_from_name(p)
+
+def get_molfile_from_pubchem(cid):
+    url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/record/SDF"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.text
+    return None
+
+if pubchem_cid:
+    molfile_data = get_molfile_from_pubchem(pubchem_cid)
+    if molfile_data:
+        print(molfile_data)
+    else:
+        print("Erreur avec pubmed")
+else:
+    print('nope')
+
+
+def molfile_to_smiles2(molfile):
+    try:
+        # print(molfile)
+        mol = Chem.MolFromMolBlock(molfile)
+        if mol is None:
+            raise ValueError("nope premier etape de conversion en smile")
+        
+        smiles = Chem.MolToSmiles(mol)
+        
+        return smiles
+    
+    except Exception as e:
+        print('e', e)
+
+smiles = molfile_to_smiles2(molfile_data)
+print(smiles)
+
+
+# =============================================================================
+# PARTIE FUSION RXN / CMP
+# =============================================================================
+class RXNData:
     def __init__(self, path, input_file, file_out):
         self.path = path
         self.input_file = input_file
         if file_out:
             self.file_out = file_out
         else:
-            self.file_out = add_rxn_filename(input_file)
+            self.file_out = new_filename(input_file, 'RXN')
 
     def get_path(self):
         return self.path
