@@ -20,6 +20,9 @@ class TestRMXFile(unittest.TestCase):
         r = RMX.molecule_sep('ATP + H2O')
         desired_r = [(1, 'ATP'), (1, 'H2O')]
         self.assertListEqual(r, desired_r)
+    
+    def test_add_rxn_filename(self):
+        self.assertEqual('RMX_test1.json', RMX.add_rmx_filename('test1.json'))
 
 if __name__ == '__main__':
     unittest.main()
