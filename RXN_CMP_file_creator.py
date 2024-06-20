@@ -10,6 +10,7 @@ import re
 import requests
 from rdkit import Chem
 from zeep import Client
+from collections import Counter
 # Lire le fichier
 # Lire la ligne data
 # Ajouter au fichier susbtrat et produit
@@ -40,29 +41,30 @@ def molecule_sep(elements: str):
         and a string molecule. JSON tuples = list
     """
     eq = elements.split('+')
-    result = []
-    l_molecule = {}
-    
+    molecules = []
+
     for elet in eq:
         elet = elet.strip()
-        
-        match = re.match(r'(\d*)\s*(.+)', elet)
+        match = re.match(r'(\d+)\s+(.+)', elet)
         if match:
-            coef = match.group(1)
+            coef = int(match.group(1))
             molecule = match.group(2)
-            if coef == '':
-                coef = 1
-            else:
-                coef = int(coef)
+        else:
+            coef = 1
+            molecule = elet
+        for _ in range(coef):
+            molecules.append(molecule)
 
-            l_molecule[molecule] = ''
-            result.append((coef, molecule))
+    counts = Counter(molecules)
+    result = [(count, molecule) for molecule, count in counts.items()]
 
-    return result, l_molecule
+    return result, molecules
 
-# print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
-# print(molecule_sep('ATP + H2O'))
 
+
+print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
+print(molecule_sep('ATP + H2O'))
+print(molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test'))
 
 def modif_file(path : str, input_file : str, file_out : str):
     """
@@ -191,4 +193,4 @@ class RXNData:
     def run(self):
         modif_file(self.get_path(), self.get_input_file(), self.get_file_out())
 
-RXNData(path, input_file, file_out).run()
+# RXNData(path, input_file, file_out).run()
