@@ -40,8 +40,10 @@ def molecule_sep(elements: str):
         A list of tuples, where each tuple contains an integer coefficient 
         and a string molecule. JSON tuples = list
     """
-    eq = elements.split('+')
-    molecules = []
+    #Laisser l'espace sinon ne prend pas le + du H+ par exemple
+    eq = elements.split(' + ')
+    molecules = {}
+    result = []
 
     for elet in eq:
         elet = elet.strip()
@@ -52,19 +54,16 @@ def molecule_sep(elements: str):
         else:
             coef = 1
             molecule = elet
-        for _ in range(coef):
-            molecules.append(molecule)
 
-    counts = Counter(molecules)
-    result = [(count, molecule) for molecule, count in counts.items()]
+        molecules[molecule] = ''
+        result.append((coef, molecule))
 
     return result, molecules
 
 
-
-print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
-print(molecule_sep('ATP + H2O'))
-print(molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test'))
+# print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
+# print(molecule_sep('ATP + H2O'))
+# print(molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test'))
 
 def modif_file(path : str, input_file : str, file_out : str):
     """
@@ -95,7 +94,7 @@ def modif_file(path : str, input_file : str, file_out : str):
         produits = molecule_sep(reaction_SP[i_symbol_egale+2:])
         CMP_data.update(substrates[1])
         CMP_data.update(produits[1])
-        # print()
+        # # print()
         # print(CMP_data)
         # re-extrait les ID a partir de sub et prd
         #ou
@@ -155,22 +154,28 @@ def get_molfile_from_pubchem(cid):
 # molfile_data = get_molfile_from_pubchem(pubchem_cid)
 
 
-def molfile_to_smiles2(molfile):
+def molfile_to_smiles2(molecule):
     try:
-        # print(molfile)
-        mol = Chem.MolFromMolBlock(molfile)
+        mol = Chem.MolFromMolBlock(molecule)
         if mol is None:
             raise ValueError("nope premier etape de conversion en smile")
         smiles = Chem.MolToSmiles(mol)
         return smiles
-
     except Exception as e:
-        print('le prbl est :', e)
+        # print('le prbl est :', e)
+        smiles = 'None'
 
 # smiles = molfile_to_smiles2(molfile_data)
 # print(smiles)
+def file_mol_smile(path : str, input_file : str, file_out : str):
+    with open(path + input_file, "r") as file:
+        data = json.load(file)
+    for molecule in data:
+        data[molecule] = molfile_to_smiles2(molecule)
+    with open(path + file_out, "w", encoding = 'utf8') as file:
+        json.dump(data, file, indent = 2, ensure_ascii=False)
 
-
+file_mol_smile(path, 'out2.json', 'out3.json')
 # =============================================================================
 # PARTIE FUSION RXN / CMP
 # =============================================================================
