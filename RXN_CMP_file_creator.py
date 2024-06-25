@@ -10,8 +10,6 @@ import re
 import requests
 from rdkit import Chem
 from zeep import Client
-from collections import Counter
-# Lire le fichier
 # Lire la ligne data
 # Ajouter au fichier susbtrat et produit
 
@@ -131,7 +129,7 @@ def new_filename(file: str, name : str) -> str:
 # PARTIE CMP
 # =============================================================================
 
-def get_pubchem_cid_from_name(protein):
+def pubchem_cid_from_name(protein):
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{protein}/cids/JSON"
     response = requests.get(url)
     if response.status_code == 200:
@@ -141,25 +139,45 @@ def get_pubchem_cid_from_name(protein):
     return None
 
 # p = "ATP"
-# pubchem_cid = get_pubchem_cid_from_name(p)
+# pubchem_cid = pubchem_cid_from_name(p)
+
+# url = 'https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl'
+# client = Client(url)
 
 
-def get_molfile_from_pubchem(cid):
+# reponse_idnumber = client.service.getLigandStructureIdByCompoundName(enzyme_id=portein)
+# url2=f'https://www.brenda-enzymes.org/molfile.php?LigandID={reponse_idnumber}'
+# molfile = reponse_idnumber.molfile
+
+
+def mol_from_pubchem(cid):
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/record/SDF"
     response = requests.get(url)
     if response.status_code == 200:
         return response.text
     return None
 
-# molfile_data = get_molfile_from_pubchem(pubchem_cid)
+# molfile_data = mol_from_pubchem(pubchem_cid)
+
+def mol_to_molfile_soap(protein):
+    url = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
+    client = Client(url)
+    reponse_idnumber = client.service.getLigandStructureIdByCompoundName(id=protein)
+    url2=f'https://www.brenda-enzymes.org/molfile.php?LigandID={reponse_idnumber}'
+    # molfile = reponse_idnumber.molfile
+    print(url2)
+
+mol_to_molfile_soap('ATP')
 
 
-def molfile_to_smiles2(molecule):
+
+def molfile_to_smiles(molfile):
     try:
-        mol = Chem.MolFromMolBlock(molecule)
+        mol = Chem.MolFromMolBlock(molfile)
         if mol is None:
             raise ValueError("nope premier etape de conversion en smile")
         smiles = Chem.MolToSmiles(mol)
+        print(smiles)
         return smiles
     except Exception as e:
         # print('le prbl est :', e)
@@ -170,12 +188,15 @@ def molfile_to_smiles2(molecule):
 def file_mol_smile(path : str, input_file : str, file_out : str):
     with open(path + input_file, "r") as file:
         data = json.load(file)
-    for molecule in data:
-        data[molecule] = molfile_to_smiles2(molecule)
+    for protein in data.keys():
+        molecule = mol_from_pubchem(pubchem_cid_from_name(protein))
+        print(molecule)
+        data[protein] = molfile_to_smiles(molecule)
+        print(protein)
     with open(path + file_out, "w", encoding = 'utf8') as file:
         json.dump(data, file, indent = 2, ensure_ascii=False)
 
-file_mol_smile(path, 'out2.json', 'out3.json')
+# file_mol_smile(path, 'out2.json', 'out3.json')
 # =============================================================================
 # PARTIE FUSION RXN / CMP
 # =============================================================================
