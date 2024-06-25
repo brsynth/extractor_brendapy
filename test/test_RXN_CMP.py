@@ -13,9 +13,9 @@ class TestRXNFile(unittest.TestCase):
     def test1_molecule_sep(self):
         r = RNX_CMP.molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+')
         desired_r = ([(1, 'monohexosylceramide'), (2, 'ferrocytochrome b5'),
-                     (1, 'O2'), (2, 'H')] , {'monohexosylceramide': '',
+                     (1, 'O2'), (2, 'H+')] , {'monohexosylceramide': '',
                                              'ferrocytochrome b5': '', 'O2': '',
-                                             'H': ''})
+                                             'H+': ''})
         self.assertEqual(r, desired_r)
 
     def test2_molecule_sep(self):
@@ -24,8 +24,9 @@ class TestRXNFile(unittest.TestCase):
         self.assertEqual(r, desired_r)
     
     def test3_molecule_sep(self):
-        r = RNX_CMP.molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test')
-        desired_r = [(1, '2-(3-mol)test'), (1, 'mol2'), (1, '(S)-2-(3-mol)test')]
+        r = RNX_CMP.molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-m)test')
+        desired_r = ([(1, '2-(3-mol)test'), (1, 'mol2'), (1, '(S)-2-(3-m)test')],
+                     {'2-(3-mol)test': '', 'mol2': '', '(S)-2-(3-m)test': ''})
         self.assertEqual(r, desired_r)
 
     def test1_new_filename(self):
