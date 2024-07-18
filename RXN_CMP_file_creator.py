@@ -10,6 +10,8 @@ import re
 import requests
 from rdkit import Chem
 from zeep import Client
+import hashlib
+import logging
 # Lire la ligne data
 # Ajouter au fichier susbtrat et produit
 
@@ -35,16 +37,30 @@ def molecule_sep(elements: str):
     Returns
     -------
     list of tuple
-        A list of tuples, where each tuple contains an integer coefficient 
+        A list of tuples, whimport loggingere each tuple contains an integer coefficient 
         and a string molecule. JSON tuples = list
     """
-    #Laisser l'espace sinon ne prend pas le + du H+ par exemple
+    #Pre traitement
+    elements = re.sub(r'\|.*?\|', '', elements).strip()
+    # #Laisser l'espace sinon ne prend pas le + du H+ par exemple
     eq = elements.split(' + ')
     molecules = {}
     result = []
+    rever = '?'
 
     for elet in eq:
         elet = elet.strip()
+        
+        if elet == '?':
+            return None
+
+        if '{r}' in elet:
+            rever = 'r'
+            elet = elet.replace('{r}', '').strip()
+        elif '{ir}' in elet:
+            rever = 'ir'
+            elet = elet.replace('{ir}', '').strip()
+
         match = re.match(r'(\d+)\s+(.+)', elet)
         if match:
             coef = int(match.group(1))
@@ -56,11 +72,14 @@ def molecule_sep(elements: str):
         molecules[molecule] = ''
         result.append((coef, molecule))
 
-    return result, molecules
+    return result, molecules, rever
 
 
 # print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
-# print(molecule_sep('ATP + H2O'))
+# print(molecule_sep('monohexosylceramide + ? + O2 + 2 H+'))
+# print(molecule_sep('NAD+ + H+ |#116# 9% activity compared to cyclohexanone <197>| {r}'))
+# print(molecule_sep('ATP + H2O {r}'))
+# print(molecule_sep('ATP + H2O {ir}'))
 # print(molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test'))
 
 def modif_file(path : str, input_file : str, file_out : str):
@@ -84,29 +103,35 @@ def modif_file(path : str, input_file : str, file_out : str):
     """
     with open(path + input_file, "r") as file:
         data = json.load(file)
+    RNX_data = []
     CMP_data = {}
     for element in data:
         reaction_SP = element['SP_data']
         i_symbol_egale = reaction_SP.find("=")
         substrates = molecule_sep(reaction_SP[:i_symbol_egale-1])
         produits = molecule_sep(reaction_SP[i_symbol_egale+2:])
-        CMP_data.update(substrates[1])
-        CMP_data.update(produits[1])
-        # # print()
-        # print(CMP_data)
-        # re-extrait les ID a partir de sub et prd
-        #ou
-        # mol sep retourne result et la list des ID pour faire le fichier CMP
-        #enregistre avec une chaine vide et c'est plus tard que je mets le smile
-        element['substrates'] = substrates[0]
-        element['products'] = produits[0]
-    
+        if produits == None or substrates == None:
+            logging.warning('Exception')
+        else:
+            CMP_data.update(substrates[1])
+            CMP_data.update(produits[1])
+            # re-extrait les ID a partir de sub et prd
+            #ou
+            # mol sep retourne result et la list des ID pour faire le fichier CMP
+            #enregistre avec une chaine vide et c'est plus tard que je mets le smile
+            elets = element
+            elets['reversibility'] = produits[2]
+            elets['substrates'] = substrates[0]
+            elets['products'] = produits[0]
+            RNX_data.append(elets)
+
     with open(path + file_out, "w", encoding = 'utf8') as file:
-        json.dump(data, file, indent = 2, ensure_ascii=False)
+        json.dump(RNX_data, file, indent = 2, ensure_ascii=False)
     file_out2 = 'out2.json'
     with open(path + file_out2, "w", encoding = 'utf8') as file:
         json.dump(CMP_data, file, indent = 2, ensure_ascii=False)
 
+# modif_file(path, input_file, file_out)
 
 def new_filename(file: str, name : str) -> str:
     """
@@ -144,12 +169,7 @@ def pubchem_cid_from_name(protein):
 # url = 'https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl'
 # client = Client(url)
 
-
-# reponse_idnumber = client.service.getLigandStructureIdByCompoundName(enzyme_id=portein)
-# url2=f'https://www.brenda-enzymes.org/molfile.php?LigandID={reponse_idnumber}'
-# molfile = reponse_idnumber.molfile
-
-
+# 
 def mol_from_pubchem(cid):
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/record/SDF"
     response = requests.get(url)
@@ -157,19 +177,30 @@ def mol_from_pubchem(cid):
         return response.text
     return None
 
-# molfile_data = mol_from_pubchem(pubchem_cid)
+# molfile_databis = mol_from_pubchem(pubchem_cid)
+# print(molfile_databis)
+# print(pubchem_cid)
 
-def mol_to_molfile_soap(protein):
+def url_molfile_soap(email : str, password : str, prot_name):
     url = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
     client = Client(url)
-    reponse_idnumber = client.service.getLigandStructureIdByCompoundName(id=protein)
-    url2=f'https://www.brenda-enzymes.org/molfile.php?LigandID={reponse_idnumber}'
-    # molfile = reponse_idnumber.molfile
-    print(url2)
+    password = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    ligand_id = client.service.getLigandStructureIdByCompoundName(email, password, id=prot_name)
+    if ligand_id:
+        molfile_url = f'https://www.brenda-enzymes.org/molfile.php?LigandID={ligand_id}'
+        return molfile_url
+    else:
+        return None
 
-mol_to_molfile_soap('ATP')
+# url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', 'ATP')
 
+def molfile_soap(url_molfile):
+    response = requests.get(url_molfile)
+    if response.status_code == 200:
+        return response.text
+    return None
 
+# molfile_data = molfile_soap(url_molfile)
 
 def molfile_to_smiles(molfile):
     try:
@@ -177,22 +208,24 @@ def molfile_to_smiles(molfile):
         if mol is None:
             raise ValueError("nope premier etape de conversion en smile")
         smiles = Chem.MolToSmiles(mol)
-        print(smiles)
         return smiles
     except Exception as e:
         # print('le prbl est :', e)
-        smiles = 'None'
+        smiles = None
 
-# smiles = molfile_to_smiles2(molfile_data)
+# smiles = molfile_to_smiles(molfile_data)
 # print(smiles)
+
 def file_mol_smile(path : str, input_file : str, file_out : str):
     with open(path + input_file, "r") as file:
         data = json.load(file)
     for protein in data.keys():
-        molecule = mol_from_pubchem(pubchem_cid_from_name(protein))
-        print(molecule)
-        data[protein] = molfile_to_smiles(molecule)
-        print(protein)
+        try:
+            url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', protein)
+            molecule = molfile_soap(url_molfile)
+            data[protein] = molfile_to_smiles(molecule)
+        except Exception as e:
+            print(e)
     with open(path + file_out, "w", encoding = 'utf8') as file:
         json.dump(data, file, indent = 2, ensure_ascii=False)
 
@@ -200,23 +233,30 @@ def file_mol_smile(path : str, input_file : str, file_out : str):
 # =============================================================================
 # PARTIE FUSION RXN / CMP
 # =============================================================================
-class RXNData:
-    def __init__(self, path, input_file, file_out):
+class RXN_CMP:
+    def __init__(self, path, input_file, file_out1, file_out2):
         self.path = path
         self.input_file = input_file
-        if file_out:
-            self.file_out = file_out
+        if file_out1:
+            self.file_out_RXM = file_out1
         else:
             self.file_out = new_filename(input_file, 'RXN')
+        if file_out2:
+            self.file_out_CMP = file_out2
+        else:
+            self.file_out = new_filename(input_file, 'CMP')
 
     def get_path(self):
         return self.path
     def get_input_file(self):
         return self.input_file
-    def get_file_out(self):
-        return self.file_out
+    def get_file_out_RXN(self):
+        return self.file_out_RXM
+    def get_file_out_CMP(self):
+        return self.file_out_CMP
 
     def run(self):
-        modif_file(self.get_path(), self.get_input_file(), self.get_file_out())
+        modif_file(self.get_path(), self.get_input_file(), self.file_out_RXM())
+        file_mol_smile(self.get_path(), self.file_out_RXM(), self.file_out_CMP())
 
-# RXNData(path, input_file, file_out).run()
+# RXN_CMP(path, input_file, file_out).run()
