@@ -15,28 +15,39 @@ class TestRXNFile(unittest.TestCase):
         desired_r = ([(1, 'monohexosylceramide'), (2, 'ferrocytochrome b5'),
                      (1, 'O2'), (2, 'H+')] , {'monohexosylceramide': '',
                                              'ferrocytochrome b5': '', 'O2': '',
-                                             'H+': ''})
+                                             'H+': ''}, '?')
         self.assertEqual(r, desired_r)
 
     def test2_molecule_sep(self):
-        r = RNX_CMP.molecule_sep('ATP + H2O')
-        desired_r = ([(1, 'ATP'), (1, 'H2O')], {'ATP': '', 'H2O': ''})
+        r = RNX_CMP.molecule_sep('ATP + H2O {r}')
+        desired_r = ([(1, 'ATP'), (1, 'H2O')], {'ATP': '', 'H2O': ''}, 'r')
         self.assertEqual(r, desired_r)
     
     def test3_molecule_sep(self):
         r = RNX_CMP.molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-m)test')
         desired_r = ([(1, '2-(3-mol)test'), (1, 'mol2'), (1, '(S)-2-(3-m)test')],
-                     {'2-(3-mol)test': '', 'mol2': '', '(S)-2-(3-m)test': ''})
+                     {'2-(3-mol)test': '', 'mol2': '', '(S)-2-(3-m)test': ''}, '?')
         self.assertEqual(r, desired_r)
 
+    def test4_molecule_sep(self):
+        r = RNX_CMP.molecule_sep('monohexosylceramide + ? + O2 + 2 H+')
+        desired_r = (None)
+        self.assertEqual(r, desired_r)
+    
+    def test5_molecule_sep(self):
+        r = RNX_CMP.molecule_sep('NAD+ + H+ |#116# 9% activity compared to cyclohexanone <197>| {ir}')
+        desired_r = ([(1, 'NAD+'), (1, 'H+')], {'NAD+': '', 'H+': ''}, 'ir')
+        self.assertEqual(r, desired_r)
+    
     def test1_new_filename(self):
         self.assertEqual('RXN_test1.json', RNX_CMP.new_filename('test1.json', 'RXN'))
 
     def test2_new_filename(self):
         self.assertEqual('CPM_test1.json', RNX_CMP.new_filename('test1.json', 'CPM'))
 
-# class TestRXNFile(unittest.TestCase):
+# class TestCMPFile(unittest.TestCase):
 #     pass
 
 if __name__ == '__main__':
     unittest.main()
+
