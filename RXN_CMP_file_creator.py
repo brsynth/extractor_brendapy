@@ -42,7 +42,7 @@ def molecule_sep(elements: str):
     """
     #Pre traitement
     elements = re.sub(r'\|.*?\|', '', elements).strip()
-    # #Laisser l'espace sinon ne prend pas le + du H+ par exemple
+    #Laisser l'espace sinon ne prend pas le + du H+ par exemple
     eq = elements.split(' + ')
     molecules = {}
     result = []
@@ -216,18 +216,45 @@ def molfile_to_smiles(molfile):
 # smiles = molfile_to_smiles(molfile_data)
 # print(smiles)
 
-def file_mol_smile(path : str, input_file : str, file_out : str):
+# def file_mol_smile(path : str, input_file : str, file_out : str):
+#     with open(path + input_file, "r") as file:
+#         data = json.load(file)
+#     for protein in data.keys():
+#         try:
+#             url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', protein)
+#             molecule = molfile_soap(url_molfile)
+#             data[protein] = molfile_to_smiles(molecule)
+#         except Exception as e:
+#             print(e)
+#     with open(path + file_out, "w", encoding = 'utf8') as file:
+#         json.dump(data, file, indent = 2, ensure_ascii=False)
+
+def file_mol_smile(path: str, input_file: str, file_out: str):
     with open(path + input_file, "r") as file:
         data = json.load(file)
+    
+    count = 0
+    size = 100
+    
     for protein in data.keys():
         try:
-            url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', protein)
+            url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr", 'brendamolfile', protein)
             molecule = molfile_soap(url_molfile)
             data[protein] = molfile_to_smiles(molecule)
         except Exception as e:
             print(e)
-    with open(path + file_out, "w", encoding = 'utf8') as file:
-        json.dump(data, file, indent = 2, ensure_ascii=False)
+        
+        count += 1
+        
+        if count % size == 0:
+            temp_file_out = f"{path}temp_{count // size}_{file_out}"
+            with open(temp_file_out, "w", encoding='utf8') as temp_file:
+                json.dump(data, temp_file, indent=2, ensure_ascii=False)
+            print(f"sauvegard temporaire au nombre {count}")
+
+    with open(path + file_out, "w", encoding='utf8') as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
+    print('FINITO')
 
 # file_mol_smile(path, 'out2.json', 'out3.json')
 # =============================================================================
