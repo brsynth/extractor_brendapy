@@ -163,13 +163,7 @@ def pubchem_cid_from_name(protein):
             return data['IdentifierList']['CID'][0]
     return None
 
-# p = "ATP"
-# pubchem_cid = pubchem_cid_from_name(p)
 
-# url = 'https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl'
-# client = Client(url)
-
-# 
 def mol_from_pubchem(cid):
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/record/SDF"
     response = requests.get(url)
@@ -192,7 +186,6 @@ def url_molfile_soap(email : str, password : str, prot_name):
     else:
         return None
 
-# url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', 'ATP')
 
 def molfile_soap(url_molfile):
     response = requests.get(url_molfile)
@@ -200,7 +193,6 @@ def molfile_soap(url_molfile):
         return response.text
     return None
 
-# molfile_data = molfile_soap(url_molfile)
 
 def molfile_to_smiles(molfile):
     try:
@@ -214,31 +206,56 @@ def molfile_to_smiles(molfile):
         smiles = None
 
 # smiles = molfile_to_smiles(molfile_data)
-# print(smiles)
 
-# def file_mol_smile(path : str, input_file : str, file_out : str):
-#     with open(path + input_file, "r") as file:
-#         data = json.load(file)
-#     for protein in data.keys():
-#         try:
-#             url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr",'brendamolfile', protein)
-#             molecule = molfile_soap(url_molfile)
-#             data[protein] = molfile_to_smiles(molecule)
-#         except Exception as e:
-#             print(e)
-#     with open(path + file_out, "w", encoding = 'utf8') as file:
-#         json.dump(data, file, indent = 2, ensure_ascii=False)
+def file_mol_smile(path: str, input_file: str, file_out: str, mail : str, mdp :str, size = 100):
+    """
+    Process a JSON file containing protein data to convert molecular structures to SMILES notation.
 
-def file_mol_smile(path: str, input_file: str, file_out: str):
+    This function reads a JSON file, processes each protein entry by converting molecular
+    structure data to SMILES notation, and writes the updated data to an output file.
+    It also performs periodic temporary backups of the data during processing.
+
+    Parameters:
+    -----------
+    path : str
+        The directory path where the input and output files are located.
+    input_file : str
+        The name of the input JSON file containing protein data.
+    file_out : str
+        The name of the output JSON file where the processed data will be saved.
+    mail : str
+        Email address used for authentication with the external service.
+    mdp : str
+        Password used for authentication with the external service.
+    size : int, optional
+        The number of proteins to process before creating a temporary backup (default is 100).
+
+    Returns:
+    --------
+    None
+
+    Raises:
+    -------
+    Exception
+        If an error occurs during the processing of a protein, the error is printed and
+        the function continues with the next protein.
+
+    Notes:
+    ------
+    - This function depends on the existence of `url_molfile_soap`, `molfile_soap`,
+      and `molfile_to_smiles` functions, which are expected to handle external service
+      communication and conversion logic.
+    - Temporary backup files are created with the prefix 'temp_' followed by the output
+      file name and saved in the specified path.
+    """
     with open(path + input_file, "r") as file:
         data = json.load(file)
     
     count = 0
-    size = 100
     
     for protein in data.keys():
         try:
-            url_molfile = url_molfile_soap("nolwenn.paris@inrae.fr", 'brendamolfile', protein)
+            url_molfile = url_molfile_soap(mail, mdp, protein)
             molecule = molfile_soap(url_molfile)
             data[protein] = molfile_to_smiles(molecule)
         except Exception as e:
@@ -247,16 +264,18 @@ def file_mol_smile(path: str, input_file: str, file_out: str):
         count += 1
         
         if count % size == 0:
-            temp_file_out = f"{path}temp_{count // size}_{file_out}"
+            temp_file_out = f"{path}temp_{file_out}"
             with open(temp_file_out, "w", encoding='utf8') as temp_file:
                 json.dump(data, temp_file, indent=2, ensure_ascii=False)
-            print(f"sauvegard temporaire au nombre {count}")
+            print(f"temporary backup {count}")
 
     with open(path + file_out, "w", encoding='utf8') as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
     print('FINITO')
 
-# file_mol_smile(path, 'out2.json', 'out3.json')
+# file_mol_smile(path, 'out2.json', 'out3.json', "nolwenn.paris@inrae.fr", 'brendamolfile', size = 200)
+
+
 # =============================================================================
 # PARTIE FUSION RXN / CMP
 # =============================================================================
