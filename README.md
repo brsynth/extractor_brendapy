@@ -9,6 +9,7 @@ Here, we have chosen to store the datasets in json files.
 TO DO
 -----
 - Complete writing the unit test functions for the RXN_CMP_file_creator.py file.
+- Finish setting up the module for RXN_CMP from the args file of src2 and main from the terminal.
 
 
 Installation
@@ -60,7 +61,22 @@ data, refs, comment.
 RXN AND CMP
 ===========
 
+```
+python -m RXM_CMP --path_file --input_file --file_RXM --file_RXM --file_CMP --mail --mdp 
+```
 
+--path_file :
+
+--input_file : The initial JSON files, which include the reaction, substrates,
+products, their stoichiometric coefficients, and whether the reaction is reversible.
+
+--file_RXM : A dictionary where the values are lists of molecules.
+
+--file_CMP : A dictionary where each key maps to a list of molecules, and each 
+molecule in the list is associated with its SMILES representation.
+
+--mail: mail for brenda
+--mdp : password
 
 
 Authors
