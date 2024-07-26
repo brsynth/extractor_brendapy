@@ -155,6 +155,27 @@ def new_filename(file: str, name : str) -> str:
 # =============================================================================
 
 def pubchem_cid_from_name(protein):
+    """
+    Retrieve the PubChem Compound Identifier (CID) for a given protein name.
+
+    This function queries the PubChem API to obtain the CID for a compound by its name.
+    If the query is successful and a CID is found, the first CID from the results is returned.
+
+    Parameters:
+    -----------
+    protein : str
+        The name of the protein or compound to search for.
+
+    Returns:
+    --------
+    int or None
+        The CID of the compound if found, otherwise None.
+
+    Raises:
+    -------
+    requests.exceptions.RequestException
+        If there is an issue with the GET request.
+    """
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{protein}/cids/JSON"
     response = requests.get(url)
     if response.status_code == 200:
@@ -165,6 +186,28 @@ def pubchem_cid_from_name(protein):
 
 
 def mol_from_pubchem(cid):
+    """
+    Retrieve the molecular structure file (in SDF format) from PubChem for a given CID.
+
+    This function queries the PubChem API to obtain the molecular structure file (SDF) for
+    a compound by its CID. If the query is successful, the SDF content is returned.
+
+    Parameters:
+    -----------
+    cid : int
+        The PubChem Compound Identifier (CID) of the compound.
+
+    Returns:
+    --------
+    str or None
+        The molecular structure file content in SDF format if the request is successful,
+        otherwise None.
+
+    Raises:
+    -------
+    requests.exceptions.RequestException
+        If there is an issue with the GET request.
+    """
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/record/SDF"
     response = requests.get(url)
     if response.status_code == 200:
@@ -176,6 +219,31 @@ def mol_from_pubchem(cid):
 # print(pubchem_cid)
 
 def url_molfile_soap(email : str, password : str, prot_name):
+    """
+    Retrieve the URL of the molecular file from the BRENDA Enzyme Database using SOAP.
+
+    This function uses the BRENDA SOAP API to retrieve the ligand structure ID for a
+    given protein name and constructs the URL for the molecular file.
+
+    Parameters:
+    -----------
+    email : str
+        The email address used for authentication with the BRENDA SOAP API.
+    password : str
+        The password used for authentication, which will be hashed before use.
+    prot_name : str
+        The name of the protein or ligand to search for.
+
+    Returns:
+    --------
+    str or None
+        The URL of the molecular file if the ligand ID is found, otherwise None.
+
+    Raises:
+    -------
+    zeep.exceptions.Error
+        If there is an issue with the SOAP request.
+    """
     url = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
     client = Client(url)
     password = hashlib.sha256(password.encode("utf-8")).hexdigest()
@@ -188,6 +256,28 @@ def url_molfile_soap(email : str, password : str, prot_name):
 
 
 def molfile_soap(url_molfile):
+    """
+    Retrieve molecular file data from a given URL.
+
+    This function sends a GET request to the specified URL to fetch the molecular file data.
+    If the request is successful (HTTP status code 200), the content of the response is returned.
+    Otherwise, None is returned.
+
+    Parameters:
+    -----------
+    url_molfile : str
+        The URL from which to retrieve the molecular file data.
+
+    Returns:
+    --------
+    str or None
+        The content of the molecular file if the request is successful, otherwise None.
+
+    Raises:
+    -------
+    requests.exceptions.RequestException
+        If there is an issue with the GET request.
+    """
     response = requests.get(url_molfile)
     if response.status_code == 200:
         return response.text
@@ -195,14 +285,36 @@ def molfile_soap(url_molfile):
 
 
 def molfile_to_smiles(molfile):
+    """
+    Convert a molecular file format to SMILES notation.
+
+    This function takes a molecular file in MOL format and converts it to SMILES notation using RDKit.
+    If the conversion is successful, the SMILES string is returned. In case of an error during
+    conversion, a warning is logged and None is returned.
+
+    Parameters:
+    -----------
+    molfile : str
+        The molecular file content in MOL format.
+
+    Returns:
+    --------
+    str or None
+        The SMILES string if the conversion is successful, otherwise None.
+
+    Raises:
+    -------
+    ValueError
+        If there is an error during the conversion process.
+    """
     try:
         mol = Chem.MolFromMolBlock(molfile)
         if mol is None:
-            raise ValueError("nope premier etape de conversion en smile")
+            raise ValueError("Error SMILE")
         smiles = Chem.MolToSmiles(mol)
         return smiles
     except Exception as e:
-        # print('le prbl est :', e)
+        logging.warning(f'Exception : {e}')
         smiles = None
 
 # smiles = molfile_to_smiles(molfile_data)
