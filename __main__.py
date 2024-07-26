@@ -6,9 +6,9 @@
 
 import sys
 from .src.args import add_arguments, build_args_parser
-# from .src import DataSetBrenda
+from .src import DataSetBrenda
 # from .src2.RXN_CMP_file_creator import RXN_CMP
-from .src2.args import add_arguments, build_args_parser
+# from .src2.args import add_arguments, build_args_parser
 from argparse import (
     ArgumentParser,
     Namespace
