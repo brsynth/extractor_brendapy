@@ -12,8 +12,6 @@ from rdkit import Chem
 from zeep import Client
 import hashlib
 import logging
-# Lire la ligne data
-# Ajouter au fichier susbtrat et produit
 
 
 path = '/home/nparis/brenda_enzyme/'
@@ -36,13 +34,17 @@ def molecule_sep(elements: str):
     
     Returns
     -------
-    list of tuple
-        A list of tuples, whimport loggingere each tuple contains an integer coefficient 
-        and a string molecule. JSON tuples = list
+    tuple
+        A tuple containing:
+        - list of tuple: A list of tuples, where each tuple contains an integer coefficient 
+          and a string molecule.
+        - dict: A dictionary with molecule names as keys.
+        - str: A string indicating whether the reaction is reversible ('r'), 
+          irreversible ('ir'), or unknown ('?').
     """
-    #Pre traitement
+    # Preprocessing: remove content within pipes and strip whitespace
     elements = re.sub(r'\|.*?\|', '', elements).strip()
-    #Laisser l'espace sinon ne prend pas le + du H+ par exemple
+    # Split the elements string by ' + ' to separate individual components
     eq = elements.split(' + ')
     molecules = {}
     result = []
@@ -54,6 +56,7 @@ def molecule_sep(elements: str):
         if elet == '?':
             return None
 
+        # Determine the type of reaction
         if '{r}' in elet:
             rever = 'r'
             elet = elet.replace('{r}', '').strip()
@@ -61,6 +64,7 @@ def molecule_sep(elements: str):
             rever = 'ir'
             elet = elet.replace('{ir}', '').strip()
 
+        # Match the coefficient and molecule name
         match = re.match(r'(\d+)\s+(.+)', elet)
         if match:
             coef = int(match.group(1))
@@ -75,13 +79,6 @@ def molecule_sep(elements: str):
     return result, molecules, rever
 
 
-# print(molecule_sep('monohexosylceramide + 2 ferrocytochrome b5 + O2 + 2 H+'))
-# print(molecule_sep('monohexosylceramide + ? + O2 + 2 H+'))
-# print(molecule_sep('NAD+ + H+ |#116# 9% activity compared to cyclohexanone <197>| {r}'))
-# print(molecule_sep('ATP + H2O {r}'))
-# print(molecule_sep('ATP + H2O {ir}'))
-# print(molecule_sep('2-(3-mol)test + mol2 + (S)-2-(3-mol)test'))
-
 def modif_file(path : str, input_file : str, file_out : str):
     """
     Modifies a JSON file by parsing chemical reactions and adding substrate 
@@ -90,16 +87,17 @@ def modif_file(path : str, input_file : str, file_out : str):
     Parameters
     ----------
     path : str
-        The directory path where the input and output files are located
+        The directory path where the input and output files are located.
     input_file : str
-        The name of the input JSON file containing reaction data
+        The name of the input JSON file containing reaction data.
     file_out : str
-        The name of the output JSON file where modified data will be saved
+        The name of the output JSON file where modified data will be saved.
     
     Returns
     -------
-    This function does not return any value. It writes the modified data to
-    the specified output file.
+    None
+        This function does not return any value. It writes the modified data to
+        the specified output file.
     """
     with open(path + input_file, "r") as file:
         data = json.load(file)
@@ -108,17 +106,17 @@ def modif_file(path : str, input_file : str, file_out : str):
     for element in data:
         reaction_SP = element['SP_data']
         i_symbol_egale = reaction_SP.find("=")
+        # Parse substrates and products
         substrates = molecule_sep(reaction_SP[:i_symbol_egale-1])
         produits = molecule_sep(reaction_SP[i_symbol_egale+2:])
         if produits == None or substrates == None:
             logging.warning('Exception')
         else:
+            # Update CMP_data with substrates and products
             CMP_data.update(substrates[1])
             CMP_data.update(produits[1])
-            # re-extrait les ID a partir de sub et prd
-            #ou
-            # mol sep retourne result et la list des ID pour faire le fichier CMP
-            #enregistre avec une chaine vide et c'est plus tard que je mets le smile
+
+            # Update reaction element with parsed data
             elets = element
             elets['reversibility'] = produits[2]
             elets['substrates'] = substrates[0]
