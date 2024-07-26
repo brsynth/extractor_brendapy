@@ -38,6 +38,43 @@ class TestRXNFile(unittest.TestCase):
         r = RNX_CMP.molecule_sep('NAD+ + H+ |#116# 9% activity compared to cyclohexanone <197>| {ir}')
         desired_r = ([(1, 'NAD+'), (1, 'H+')], {'NAD+': '', 'H+': ''}, 'ir')
         self.assertEqual(r, desired_r)
+        
+    # def test_modif_file(self):
+    #     # Create temporary files for testing
+    #     test_path = './test_data/'
+    #     input_file = 'input.json'
+    #     output_file = 'output.json'
+    #     cmp_file = 'cmp_data.json'
+
+    #     if not os.path.exists(test_path):
+    #         os.makedirs(test_path)
+
+    #     input_data = [{'SP_data': '2 H2O + 1 O2 = 2 H2O2'}]
+
+    #     with open(test_path + input_file, 'w') as f:
+    #         json.dump(input_data, f, indent=2)
+
+    #     # Run the function
+    #     RNX_CMP.modif_file(test_path, input_file, output_file)
+
+    #     # Check output files
+    #     with open(test_path + output_file, 'r') as f:
+    #         output_data = json.load(f)
+
+    #     with open(test_path + cmp_file, 'r') as f:
+    #         cmp_data = json.load(f)
+
+    #     self.assertEqual(len(output_data), 2)
+    #     self.assertIn('reversibility', output_data[0])
+    #     self.assertIn('substrates', output_data[0])
+    #     self.assertIn('products', output_data[0])
+    #     self.assertGreater(len(cmp_data), 0)
+
+    #     # Cleanup
+    #     os.remove(test_path + input_file)
+    #     os.remove(test_path + output_file)
+    #     os.remove(test_path + cmp_file)
+    #     os.rmdir(test_path)
     
     def test1_new_filename(self):
         self.assertEqual('RXN_test1.json', RNX_CMP.new_filename('test1.json', 'RXN'))
