@@ -1,0 +1,22 @@
+[
+  {
+    "SP_data": "2 H2O + 1 O2 = 2 H2O2",
+    "reversibility": "?",
+    "substrates": [
+      [
+        2,
+        "H2O"
+      ],
+      [
+        1,
+        "O2"
+      ]
+    ],
+    "products": [
+      [
+        2,
+        "H2O2"
+      ]
+    ]
+  }
+]

@@ -3,10 +3,6 @@ from argparse import ArgumentParser
 from typing import Callable
 
 
-modif_file(self.get_path(), self.get_input_file(), self.file_out_RXM())
-file_mol_smile(self.get_path(), self.file_out_RXM(),
-               self.file_out_CMP(), self.mail(), self.mdp())
-
 DEFAULT_ARGS = {
     'path' : '/home/nparis/brenda_enzyme/',
     'input_file' : 'file1',

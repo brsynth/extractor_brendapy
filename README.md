@@ -6,6 +6,11 @@ using the [brendapy parser](https://github.com/matthiaskoenig/brendapy).
 Here, we have chosen to store the datasets in json files.
 
 
+TO DO
+-----
+- Complete writing the unit test functions for the RXN_CMP_file_creator.py file.
+
+
 Installation
 ------------
 
@@ -43,9 +48,20 @@ CL; CF; AP; tissues; SN; RT; RN; RE
 Please note:
 When you want the parameters 'KM', 'KKM', 'KI', 'TN', 'IC50', you must add 
 **substrate** to the list of requested elements.
+Other elements that may be requested, by 5 parameters are : substrate, value,
+comment, units, refs, data, chebi.
 
 For parameters: "ref", "TS", "SY", "SU", "ST", "SP", "SA", "PU", "NSP", "MW", 
 "LO", "GI", "IN", "CL", "CF", "AP" add **data**.
+Other elements that may be requested, by the list of parameters above are :
+data, refs, comment.
+
+
+RXN AND CMP
+===========
+
+
+
 
 Authors
 -------

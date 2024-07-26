@@ -420,7 +420,6 @@ class RXN_CMP:
 
     def run(self):
         modif_file(self.get_path(), self.get_input_file(), self.file_out_RXM())
-        file_mol_smile(self.get_path(), self.file_out_RXM(),
-                       self.file_out_CMP(), self.mail(), self.mdp())
+        file_mol_smile(self.get_path(), self.get_file_out_RXM(),
+                       self.get_file_out_CMP(), self.get_mail(), self.get_mdp())
 
-# RXN_CMP(path, input_file, file_out).run()
